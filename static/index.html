@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cortex Respond — AI Lead Qualification</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e1b4b; background: #fff; }
+    a { text-decoration: none; }
+
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; background: #fff; border-bottom: 1px solid #e5e7eb; }
+    .logo { font-size: 1.25rem; font-weight: 700; color: #4f46e5; letter-spacing: -0.5px; }
+    .nav-cta { background: #4f46e5; color: #fff; padding: 10px 22px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; transition: background 0.2s; cursor: pointer; border: none; }
+    .nav-cta:hover { background: #4338ca; }
+
+    .hero { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4f46e5 100%); color: #fff; padding: 96px 48px 80px; text-align: center; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
+    .hero h1 span { color: #a5b4fc; }
+    .hero p { font-size: clamp(1rem, 2vw, 1.25rem); color: #c7d2fe; max-width: 600px; margin: 0 auto 36px; }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: #fff; color: #4f46e5; padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 1rem; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 14px rgba(0,0,0,0.15); cursor: pointer; border: none; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    .btn-secondary { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.4); padding: 14px 32px; border-radius: 10px; font-weight: 600; font-size: 1rem; transition: border-color 0.2s; }
+    .btn-secondary:hover { border-color: #fff; }
+
+    .section { padding: 80px 48px; }
+    .section-label { color: #4f46e5; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .section h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800; margin-bottom: 48px; color: #1e1b4b; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; }
+    .step { background: #f8f7ff; border-radius: 16px; padding: 32px; border: 1px solid #e0e7ff; }
+    .step-num { width: 48px; height: 48px; background: #4f46e5; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; margin-bottom: 20px; }
+    .step h3 { font-size: 1.125rem; font-weight: 700; margin-bottom: 8px; }
+    .step p { color: #6b7280; font-size: 0.9375rem; line-height: 1.6; }
+
+    .features-bg { background: #f8f7ff; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+    .feature { background: #fff; border-radius: 12px; padding: 28px; border: 1px solid #e0e7ff; }
+    .feature-icon { font-size: 2rem; margin-bottom: 14px; }
+    .feature h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #1e1b4b; }
+    .feature p { color: #6b7280; font-size: 0.875rem; line-height: 1.6; }
+
+    footer { text-align: center; padding: 32px 48px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 0.875rem; }
+    footer strong { color: #4f46e5; }
+
+    #chat-toggle {
+      position: fixed; bottom: 28px; right: 28px; z-index: 1000;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #4f46e5; border: none; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(79,70,229,0.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #chat-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(79,70,229,0.6); }
+    #chat-toggle svg { width: 28px; height: 28px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    #chat-window {
+      position: fixed; bottom: 100px; right: 28px; z-index: 999;
+      width: 400px; height: 520px;
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      display: flex; flex-direction: column; overflow: hidden;
+      transform: translateY(20px) scale(0.95); opacity: 0;
+      pointer-events: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    #chat-window.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+
+    .chat-header { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 18px 20px; display: flex; align-items: center; gap: 12px; }
+    .chat-avatar { width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .chat-header-info h3 { color: #fff; font-size: 0.9375rem; font-weight: 700; }
+    .chat-status { display: flex; align-items: center; gap: 5px; }
+    .online-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
+    .chat-status span { color: rgba(255,255,255,0.8); font-size: 0.75rem; }
+
+    #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+    #messages::-webkit-scrollbar { width: 4px; }
+    #messages::-webkit-scrollbar-thumb { background: #e0e7ff; border-radius: 4px; }
+    .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; line-height: 1.5; word-break: break-word; }
+    .msg.agent { background: #f3f4f6; color: #1f2937; border-bottom-left-radius: 4px; align-self: flex-start; }
+    .msg.user { background: #4f46e5; color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+
+    .typing { display: flex; gap: 4px; align-items: center; padding: 12px 16px; background: #f3f4f6; border-radius: 18px; border-bottom-left-radius: 4px; align-self: flex-start; width: fit-content; }
+    .typing span { width: 7px; height: 7px; background: #9ca3af; border-radius: 50%; animation: bounce 1.2s infinite; }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)} }
+
+    .chat-input { display: flex; gap: 8px; padding: 14px 16px; border-top: 1px solid #e5e7eb; background: #fff; }
+    #msg-input { flex: 1; border: 1.5px solid #e5e7eb; border-radius: 24px; padding: 10px 16px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
+    #msg-input:focus { border-color: #4f46e5; }
+    #msg-input:disabled { background: #f9fafb; }
+    #send-btn { background: #4f46e5; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
+    #send-btn:hover { background: #4338ca; }
+    #send-btn:disabled { background: #c7d2fe; cursor: not-allowed; }
+    #send-btn svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    @media (max-width: 480px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 64px 20px 56px; }
+      .section { padding: 56px 20px; }
+      #chat-window { width: calc(100vw - 16px); right: 8px; bottom: 88px; height: calc(100vh - 120px); border-radius: 16px; }
+      #chat-toggle { bottom: 20px; right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Cortex Respond</div>
+  <button class="nav-cta" onclick="openChat()">See It Live</button>
+</nav>
+
+<section class="hero">
+  <h1>Never Miss a Lead <span>Again</span></h1>
+  <p>AI-powered inbound agent that qualifies and scores your leads 24/7 — so you only call back the ones worth your time.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="openChat()">Try the Demo</button>
+    <a href="#how" class="btn-secondary">How It Works</a>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <p class="section-label">Simple Process</p>
+  <h2>From inquiry to qualified lead in minutes</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Customer Messages You</h3>
+      <p>A visitor lands on your site and starts chatting. The AI greets them instantly — no wait time, no missed messages.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>AI Qualifies Instantly</h3>
+      <p>Through natural conversation, the agent collects name, phone, email, service interest, budget, and timeline.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>You Get Scored Leads</h3>
+      <p>Every completed conversation is scored 1–10 and logged to your Google Sheet. Follow up with confidence.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section features-bg">
+  <p class="section-label">What You Get</p>
+  <h2>Everything a great receptionist does — automatically</h2>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <h3>24/7 Instant Response</h3>
+      <p>Responds to every inquiry the moment it comes in — nights, weekends, public holidays.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎯</div>
+      <h3>Lead Scoring</h3>
+      <p>Each lead gets a 1–10 score based on urgency and budget alignment, so you prioritize the right follow-ups.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">💬</div>
+      <h3>FAQ Handling</h3>
+      <p>Answers common questions about your services, pricing, location, and hours — automatically.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h3>Google Sheets Log</h3>
+      <p>Every qualified lead lands in your Google Sheet with full contact details and a conversation summary.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Powered by <strong>Cortex Labs</strong> &mdash; Building AI agents for service businesses</p>
+</footer>
+
+<button id="chat-toggle" aria-label="Open chat" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+
+<div id="chat-window">
+  <div class="chat-header">
+    <div class="chat-avatar">🦷</div>
+    <div class="chat-header-info">
+      <h3>Lux Dental Clinic</h3>
+      <div class="chat-status">
+        <div class="online-dot"></div>
+        <span>Online now</span>
+      </div>
+    </div>
+  </div>
+  <div id="messages"></div>
+  <div class="chat-input">
+    <input type="text" id="msg-input" placeholder="Type a message..." autocomplete="off" />
+    <button id="send-btn" aria-label="Send">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  let sessionId = null;
+  let chatOpen = false;
+  let initialized = false;
+
+  function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  function toggleChat() { chatOpen ? closeChat() : openChat(); }
+
+  function openChat() {
+    chatOpen = true;
+    document.getElementById('chat-window').classList.add('open');
+    document.getElementById('msg-input').focus();
+    if (!initialized) initChat();
+  }
+
+  function closeChat() {
+    chatOpen = false;
+    document.getElementById('chat-window').classList.remove('open');
+  }
+
+  async function initChat() {
+    initialized = true;
+    sessionId = generateUUID();
+    setInputDisabled(true);
+    showTyping();
+    try {
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, message: '__init__' }),
+      });
+      const data = await res.json();
+      hideTyping();
+      appendMsg('agent', data.reply);
+    } catch {
+      hideTyping();
+      appendMsg('agent', "Hi there! How can I help you today?");
+    }
+    setInputDisabled(false);
+    document.getElementById('msg-input').focus();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('msg-input');
+    const text = input.value.trim();
+    if (!text || !sessionId) return;
+    input.value = '';
+    appendMsg('user', text);
+    setInputDisabled(true);
+    showTyping();
+    try {
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, message: text }),
+      });
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
+      hideTyping();
+      appendMsg('agent', data.reply);
+    } catch {
+      hideTyping();
+      appendMsg('agent', "Sorry, I'm having a bit of trouble right now. Please try again in a moment.");
+    }
+    setInputDisabled(false);
+    document.getElementById('msg-input').focus();
+  }
+
+  function appendMsg(role, text) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    div.textContent = text;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  let typingEl = null;
+  function showTyping() {
+    const msgs = document.getElementById('messages');
+    typingEl = document.createElement('div');
+    typingEl.className = 'typing';
+    typingEl.innerHTML = '<span></span><span></span><span></span>';
+    msgs.appendChild(typingEl);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  function hideTyping() {
+    if (typingEl) { typingEl.remove(); typingEl = null; }
+  }
+
+  function setInputDisabled(disabled) {
+    document.getElementById('msg-input').disabled = disabled;
+    document.getElementById('send-btn').disabled = disabled;
+  }
+
+  document.getElementById('msg-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+  document.getElementById('send-btn').addEventListener('click', sendMessage);
+</script>
+</body>
+</html>
