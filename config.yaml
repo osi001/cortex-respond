@@ -1,0 +1,42 @@
+business:
+  name: "Lux Dental Clinic"
+  industry: "Healthcare"
+  tagline: "Premium dental care in Lekki, Lagos"
+  greeting: "Hi there! Welcome to Lux Dental Clinic. How can I help you today?"
+  brand_color: "#4F46E5"
+
+services:
+  - name: "Teeth Whitening"
+    price_range: "₦50,000 - ₦120,000"
+    duration: "1-2 hours"
+  - name: "Dental Implants"
+    price_range: "₦300,000 - ₦800,000"
+    duration: "Multiple visits"
+  - name: "General Checkup"
+    price_range: "₦15,000 - ₦25,000"
+    duration: "30-45 minutes"
+  - name: "Root Canal"
+    price_range: "₦80,000 - ₦200,000"
+    duration: "1-2 visits"
+  - name: "Braces / Orthodontics"
+    price_range: "₦400,000 - ₦1,200,000"
+    duration: "12-24 months"
+
+faqs:
+  - q: "Where are you located?"
+    a: "We're at 15 Admiralty Way, Lekki Phase 1, Lagos."
+  - q: "What are your working hours?"
+    a: "Monday-Friday 8am-6pm, Saturday 9am-3pm. Closed Sundays."
+  - q: "Do you accept HMO?"
+    a: "Yes — Leadway, AXA Mansard, Hygeia, and Reliance HMO."
+  - q: "Is parking available?"
+    a: "Yes, free parking is available for all patients."
+  - q: "Do you handle emergencies?"
+    a: "Yes, we handle dental emergencies during working hours. Call us directly for urgent cases."
+
+scoring:
+  rules: |
+    Score the lead 1-10 based on:
+    - Urgency: "today/tomorrow/this week" = high, "this month" = medium, "just browsing/no timeline" = low
+    - Budget: if their budget aligns with or exceeds the service price range = high, below range = low, not mentioned = medium
+    - Combine both factors. A lead wanting service this week with matching budget = 8-10. Interested but flexible timing = 5-7. Just browsing with no budget info = 1-4.
