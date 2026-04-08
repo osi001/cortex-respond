@@ -6,6 +6,7 @@ import logging
 from typing import Optional
 from pathlib import Path
 
+import anthropic
 import yaml
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -121,3 +122,98 @@ config = load_config()
 @app.get("/")
 async def serve_frontend():
     return FileResponse(str(STATIC_DIR / "index.html"))
+
+
+# ─── Anthropic Client ────────────────────────────────────────────────────────
+
+anthropic_client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+
+
+# ─── Request / Response Models ────────────────────────────────────────────────
+
+class ChatRequest(BaseModel):
+    session_id: str
+    message: str
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    lead_data: Optional[dict] = None
+
+
+# ─── Google Sheets ────────────────────────────────────────────────────────────
+
+def append_lead_to_sheet(lead: dict) -> None:
+    """Append lead data to Google Sheet. Silently skips if credentials are not configured."""
+    creds_path = os.environ.get("GOOGLE_SHEETS_CREDENTIALS_PATH")
+    sheet_id = os.environ.get("GOOGLE_SHEET_ID")
+    if not creds_path or not sheet_id:
+        logger.info("Google Sheets not configured — lead logged to console only.")
+        logger.info("Lead data: %s", json.dumps(lead, ensure_ascii=False))
+        return
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive",
+        ]
+        creds = Credentials.from_service_account_file(creds_path, scopes=scopes)
+        gc = gspread.authorize(creds)
+        sheet = gc.open_by_key(sheet_id).sheet1
+        if not sheet.get_all_values():
+            sheet.append_row(["name", "phone", "email", "service_needed", "budget", "urgency", "score", "score_reasoning", "conversation_summary", "timestamp"])
+        sheet.append_row([
+            lead.get("name", ""),
+            lead.get("phone", ""),
+            lead.get("email", ""),
+            lead.get("service_needed", ""),
+            lead.get("budget", ""),
+            lead.get("urgency", ""),
+            lead.get("score", ""),
+            lead.get("score_reasoning", ""),
+            lead.get("conversation_summary", ""),
+            time.strftime("%Y-%m-%d %H:%M:%S"),
+        ])
+        logger.info("Lead appended to Google Sheet.")
+    except Exception as e:
+        logger.error("Failed to write to Google Sheets: %s", e)
+
+
+# ─── Chat Endpoint ────────────────────────────────────────────────────────────
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest):
+    cleanup_old_sessions(sessions)
+
+    if req.session_id not in sessions:
+        sessions[req.session_id] = {
+            "messages": [],
+            "created_at": time.time(),
+        }
+
+    session = sessions[req.session_id]
+    session["messages"].append({"role": "user", "content": req.message})
+
+    try:
+        response = anthropic_client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1024,
+            system=build_system_prompt(config),
+            messages=session["messages"],
+        )
+        raw_reply = response.content[0].text
+    except Exception as e:
+        logger.error("Anthropic API error: %s", e)
+        return ChatResponse(
+            reply="I'm sorry, I'm having a bit of trouble connecting right now. Please try again in a moment.",
+            lead_data=None,
+        )
+
+    reply, lead = parse_lead_data(raw_reply)
+    session["messages"].append({"role": "assistant", "content": raw_reply})
+
+    if lead:
+        append_lead_to_sheet(lead)
+
+    return ChatResponse(reply=reply, lead_data=lead)

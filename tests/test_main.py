@@ -61,3 +61,85 @@ def test_parse_lead_data_handles_malformed_json():
     reply, lead = parse_lead_data(raw)
     assert lead is None
     assert "<lead_data>" not in reply
+
+
+def test_chat_endpoint_returns_reply(monkeypatch):
+    from fastapi.testclient import TestClient
+    import main
+
+    class FakeTextBlock:
+        text = "Hello! How can I help you today?"
+
+    class FakeMessage:
+        content = [FakeTextBlock()]
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            return FakeMessage()
+
+    class FakeAnthropic:
+        messages = FakeMessages()
+
+    monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
+
+    client = TestClient(main.app)
+    response = client.post("/chat", json={"session_id": "test-session-1", "message": "Hi there"})
+    assert response.status_code == 200
+    data = response.json()
+    assert "reply" in data
+    assert data["reply"] == "Hello! How can I help you today?"
+    assert data["lead_data"] is None
+
+
+def test_chat_endpoint_parses_lead_data(monkeypatch):
+    from fastapi.testclient import TestClient
+    import main
+
+    lead_json = '{"name": "Amara", "phone": "08012345678", "email": "a@a.com", "service_needed": "Checkup", "budget": "\\u20a620,000", "urgency": "This week", "score": 7, "score_reasoning": "High urgency", "conversation_summary": "Amara wants a checkup."}'
+    fake_response = f"Thank you Amara! Someone will follow up soon. <lead_data>{lead_json}</lead_data>"
+
+    class FakeTextBlock:
+        text = fake_response
+
+    class FakeMessage:
+        content = [FakeTextBlock()]
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            return FakeMessage()
+
+    class FakeAnthropic:
+        messages = FakeMessages()
+
+    monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
+    monkeypatch.setattr(main, "append_lead_to_sheet", lambda lead: None)
+
+    client = TestClient(main.app)
+    response = client.post("/chat", json={"session_id": "test-session-2", "message": "That covers everything"})
+    assert response.status_code == 200
+    data = response.json()
+    assert "Thank you Amara" in data["reply"]
+    assert "<lead_data>" not in data["reply"]
+    assert data["lead_data"]["name"] == "Amara"
+    assert data["lead_data"]["score"] == 7
+
+
+def test_chat_endpoint_handles_api_error(monkeypatch):
+    from fastapi.testclient import TestClient
+    import main
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            raise Exception("API unavailable")
+
+    class FakeAnthropic:
+        messages = FakeMessages()
+
+    monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
+
+    client = TestClient(main.app)
+    response = client.post("/chat", json={"session_id": "test-session-3", "message": "Hello"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["lead_data"] is None
+    assert "trouble" in data["reply"].lower() or "sorry" in data["reply"].lower()
