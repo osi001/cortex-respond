@@ -2,7 +2,8 @@ fastapi
 uvicorn[standard]
 anthropic
 gspread
-oauth2client
+google-auth
+google-auth-oauthlib
 pyyaml
 python-dotenv
 pytest
