@@ -53,3 +53,11 @@ def test_parse_lead_data_strips_whitespace_from_reply():
     reply, lead = parse_lead_data(raw)
     assert reply.strip() == "Great speaking with you!"
     assert lead is not None
+
+
+def test_parse_lead_data_handles_malformed_json():
+    from main import parse_lead_data
+    raw = "Thanks for chatting! <lead_data>this is not valid json at all{{{</lead_data>"
+    reply, lead = parse_lead_data(raw)
+    assert lead is None
+    assert "<lead_data>" not in reply
