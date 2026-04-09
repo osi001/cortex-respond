@@ -6,5 +6,6 @@ google-auth
 google-auth-oauthlib
 pyyaml
 python-dotenv
+apscheduler
 pytest
 httpx

@@ -4,192 +4,1203 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cortex Respond — AI Lead Qualification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg:       #07090d;
+      --bg2:      #0c1018;
+      --surface:  #111620;
+      --surface2: #161d2a;
+      --gold:     #c9a84c;
+      --gold-dim: rgba(201,168,76,0.15);
+      --gold-line:rgba(201,168,76,0.25);
+      --teal:     #3d9e8c;
+      --text:     #e6dcc8;
+      --muted:    #6b7585;
+      --muted2:   #9aa0ad;
+      --border:   rgba(255,255,255,0.06);
+      --success:  #3dba8c;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e1b4b; background: #fff; }
-    a { text-decoration: none; }
 
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; background: #fff; border-bottom: 1px solid #e5e7eb; }
-    .logo { font-size: 1.25rem; font-weight: 700; color: #4f46e5; letter-spacing: -0.5px; }
-    .nav-cta { background: #4f46e5; color: #fff; padding: 10px 22px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; transition: background 0.2s; cursor: pointer; border: none; }
-    .nav-cta:hover { background: #4338ca; }
+    html { scroll-behavior: smooth; }
 
-    .hero { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4f46e5 100%); color: #fff; padding: 96px 48px 80px; text-align: center; }
-    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
-    .hero h1 span { color: #a5b4fc; }
-    .hero p { font-size: clamp(1rem, 2vw, 1.25rem); color: #c7d2fe; max-width: 600px; margin: 0 auto 36px; }
-    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary { background: #fff; color: #4f46e5; padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 1rem; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 14px rgba(0,0,0,0.15); cursor: pointer; border: none; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-    .btn-secondary { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.4); padding: 14px 32px; border-radius: 10px; font-weight: 600; font-size: 1rem; transition: border-color 0.2s; }
-    .btn-secondary:hover { border-color: #fff; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-    .section { padding: 80px 48px; }
-    .section-label { color: #4f46e5; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-    .section h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800; margin-bottom: 48px; color: #1e1b4b; }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; }
-    .step { background: #f8f7ff; border-radius: 16px; padding: 32px; border: 1px solid #e0e7ff; }
-    .step-num { width: 48px; height: 48px; background: #4f46e5; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; margin-bottom: 20px; }
-    .step h3 { font-size: 1.125rem; font-weight: 700; margin-bottom: 8px; }
-    .step p { color: #6b7280; font-size: 0.9375rem; line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
 
-    .features-bg { background: #f8f7ff; }
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-    .feature { background: #fff; border-radius: 12px; padding: 28px; border: 1px solid #e0e7ff; }
-    .feature-icon { font-size: 2rem; margin-bottom: 14px; }
-    .feature h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #1e1b4b; }
-    .feature p { color: #6b7280; font-size: 0.875rem; line-height: 1.6; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--gold-line); }
 
-    footer { text-align: center; padding: 32px 48px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 0.875rem; }
-    footer strong { color: #4f46e5; }
+    /* ─────────────────────────────────────────────
+       NAV
+    ───────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 60px; height: 68px;
+      background: rgba(7,9,13,0.85);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex; align-items: baseline; gap: 10px;
+    }
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; font-weight: 600; letter-spacing: 0.5px;
+      color: var(--text);
+    }
+    .logo-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; color: var(--gold); letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.8;
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 36px; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a {
+      font-size: 0.8125rem; color: var(--muted); font-weight: 400;
+      letter-spacing: 0.3px; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--gold-line);
+      color: var(--gold);
+      padding: 8px 22px; border-radius: 4px;
+      font-size: 0.8rem; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; letter-spacing: 0.5px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold-dim); border-color: var(--gold); }
+
+    /* ─────────────────────────────────────────────
+       HERO
+    ───────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      padding: 0 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle noise grain overlay */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; opacity: 0.4;
+    }
+
+    /* Gold vertical accent line */
+    .hero::after {
+      content: '';
+      position: absolute; top: 15%; bottom: 15%; left: 60px;
+      width: 1px; background: linear-gradient(to bottom, transparent, var(--gold-line), transparent);
+    }
+
+    .hero-left { padding-left: 28px; padding-top: 68px; }
+
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 28px;
+    }
+    .eyebrow-line { width: 32px; height: 1px; background: var(--gold); }
+    .eyebrow-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); font-weight: 500;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
+      font-weight: 300; line-height: 1.05;
+      letter-spacing: -0.5px;
+      margin-bottom: 28px;
+      color: var(--text);
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero h1 strong {
+      font-weight: 600;
+      display: block;
+    }
+
+    .hero-desc {
+      font-size: 0.9375rem; color: var(--muted2); line-height: 1.75;
+      max-width: 440px; margin-bottom: 44px; font-weight: 300;
+    }
+
+    .hero-actions { display: flex; align-items: center; gap: 20px; }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #07090d;
+      padding: 13px 32px; border-radius: 4px;
+      font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; letter-spacing: 0.3px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-link {
+      font-size: 0.8375rem; color: var(--muted); cursor: pointer;
+      background: none; border: none; font-family: 'DM Sans', sans-serif;
+      display: flex; align-items: center; gap: 6px; transition: color 0.2s;
+    }
+    .btn-link:hover { color: var(--text); }
+    .btn-link::after { content: '↓'; font-size: 0.75rem; }
+
+    /* Hero right — floating card */
+    .hero-right {
+      padding-top: 68px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 24px 28px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .hero-card:hover { border-color: var(--gold-line); }
+
+    .hero-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
+    }
+
+    .card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 12px;
+    }
+
+    .card-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem; font-weight: 600; color: var(--text);
+      line-height: 1; margin-bottom: 4px;
+    }
+
+    .card-value .unit {
+      font-size: 1rem; font-weight: 400; color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .card-sub { font-size: 0.8rem; color: var(--muted); font-weight: 300; }
+
+    .cards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ─────────────────────────────────────────────
+       DIVIDER
+    ───────────────────────────────────────────── */
+    .divider {
+      display: flex; align-items: center; gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0 60px;
+      overflow: hidden;
+    }
+
+    .divider-item {
+      flex: 1; padding: 32px 0;
+      display: flex; align-items: center; gap: 20px;
+      border-right: 1px solid var(--border);
+    }
+    .divider-item:last-child { border-right: none; padding-left: 40px; }
+    .divider-item:not(:first-child) { padding-left: 40px; }
+
+    .divider-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.25rem; font-weight: 300; color: var(--gold);
+      line-height: 1;
+    }
+
+    .divider-text .dt { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+    .divider-text .ds { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    /* ─────────────────────────────────────────────
+       HOW IT WORKS
+    ───────────────────────────────────────────── */
+    .section-wrap { padding: 100px 60px; }
+
+    .section-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 64px; padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem); font-weight: 400;
+      line-height: 1.15; letter-spacing: -0.3px;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    .section-count {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem; font-weight: 300; color: var(--border);
+      line-height: 1; letter-spacing: -2px;
+    }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; }
+
+    .step {
+      background: var(--bg2); padding: 44px 36px;
+      position: relative; transition: background 0.25s;
+    }
+    .step:hover { background: var(--surface); }
+
+    .step-idx {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 2px; color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .step-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      border: 1px solid var(--gold-line);
+      background: var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+    }
+    .step-icon svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    .step h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 500; margin-bottom: 14px;
+      color: var(--text); line-height: 1.2;
+    }
+
+    .step p { font-size: 0.875rem; color: var(--muted2); line-height: 1.7; font-weight: 300; }
+
+    .step-connector {
+      position: absolute; top: 50%; right: -1px;
+      width: 2px; height: 32px; background: var(--gold);
+      transform: translateY(-50%);
+    }
+
+    /* ─────────────────────────────────────────────
+       FEATURES
+    ───────────────────────────────────────────── */
+    .features-section {
+      padding: 0 60px 100px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+
+    .feat {
+      background: var(--bg2); padding: 44px 40px;
+      transition: background 0.25s;
+    }
+    .feat:hover { background: var(--surface); }
+    .feat.large { grid-column: span 3; }
+    .feat.wide  { grid-column: span 2; }
+
+    .feat-icon {
+      width: 36px; height: 36px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--gold-line); border-radius: 6px; background: var(--gold-dim);
+    }
+    .feat-icon svg { width: 16px; height: 16px; stroke: var(--gold); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    .feat h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 500; margin-bottom: 10px; color: var(--text);
+    }
+    .feat.large h3 { font-size: 1.7rem; }
+
+    .feat p { font-size: 0.8375rem; color: var(--muted2); line-height: 1.7; font-weight: 300; }
+
+    .feat-tag {
+      display: inline-block; margin-top: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold); border: 1px solid var(--gold-line);
+      padding: 4px 10px; border-radius: 3px;
+    }
+
+    /* ─────────────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────────────── */
+    footer {
+      padding: 40px 60px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--muted);
+    }
+    .footer-logo strong { color: var(--text); font-weight: 500; }
+
+    .footer-text { font-size: 0.75rem; color: var(--muted); }
+    .footer-text span { color: var(--gold); }
+
+    /* ─────────────────────────────────────────────
+       CHAT TOGGLE
+    ───────────────────────────────────────────── */
+    /* Demo switcher */
+    #demo-switcher {
+      position: fixed; bottom: 96px; right: 32px; z-index: 1001;
+      display: flex; gap: 6px; align-items: center;
+      background: rgba(7,9,13,0.85);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      border-radius: 6px; padding: 5px;
+    }
+    .demo-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem; letter-spacing: 2px; color: var(--muted);
+      text-transform: uppercase; padding: 0 6px; white-space: nowrap;
+    }
+    .demo-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border);
+      background: transparent; color: var(--muted2); cursor: pointer;
+      transition: all 0.18s;
+    }
+    .demo-btn:hover { color: var(--text); border-color: var(--gold-line); }
+    .demo-btn.active {
+      background: var(--gold-dim); border-color: var(--gold-line);
+      color: var(--gold);
+    }
 
     #chat-toggle {
-      position: fixed; bottom: 28px; right: 28px; z-index: 1000;
-      width: 60px; height: 60px; border-radius: 50%;
-      background: #4f46e5; border: none; cursor: pointer;
-      box-shadow: 0 4px 20px rgba(79,70,229,0.5);
-      display: flex; align-items: center; justify-content: center;
-      transition: transform 0.2s, box-shadow 0.2s;
+      position: fixed; bottom: 32px; right: 32px; z-index: 1000;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--gold);
+      color: #07090d;
+      border: none; cursor: pointer;
+      padding: 0 22px 0 14px; height: 48px; border-radius: 6px;
+      box-shadow: 0 8px 32px rgba(201,168,76,0.3), 0 2px 8px rgba(0,0,0,0.4);
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
     }
-    #chat-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(79,70,229,0.6); }
-    #chat-toggle svg { width: 28px; height: 28px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #chat-toggle:hover { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,76,0.4), 0 4px 12px rgba(0,0,0,0.5); }
 
+    .toggle-icon { width: 20px; height: 20px; flex-shrink: 0; }
+    .toggle-icon svg { width: 20px; height: 20px; fill: none; stroke: #07090d; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .toggle-label { font-size: 0.8125rem; font-weight: 600; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+
+    /* ─────────────────────────────────────────────
+       CHAT WINDOW
+    ───────────────────────────────────────────── */
     #chat-window {
-      position: fixed; bottom: 100px; right: 28px; z-index: 999;
-      width: 400px; height: 520px;
-      background: #fff; border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      position: fixed; bottom: 96px; right: 32px; z-index: 999;
+      width: 390px; height: 560px; max-height: calc(100vh - 120px);
+      background: var(--surface);
+      border: 1px solid var(--gold-line);
+      border-radius: 10px;
+      box-shadow: 0 0 0 1px var(--border), 0 32px 64px rgba(0,0,0,0.7), 0 0 40px rgba(201,168,76,0.06);
       display: flex; flex-direction: column; overflow: hidden;
-      transform: translateY(20px) scale(0.95); opacity: 0;
+      transform: translateY(14px) scale(0.98); opacity: 0;
       pointer-events: none;
-      transition: transform 0.25s ease, opacity 0.25s ease;
+      transition: transform 0.32s cubic-bezier(0.16,1,0.3,1), opacity 0.28s ease;
     }
     #chat-window.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
 
-    .chat-header { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 18px 20px; display: flex; align-items: center; gap: 12px; }
-    .chat-avatar { width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-    .chat-header-info h3 { color: #fff; font-size: 0.9375rem; font-weight: 700; }
-    .chat-status { display: flex; align-items: center; gap: 5px; }
-    .online-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
-    .chat-status span { color: rgba(255,255,255,0.8); font-size: 0.75rem; }
+    /* Chat Header */
+    .chat-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+      position: relative;
+    }
+    .chat-header::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--gold-line) 30%, var(--gold-line) 70%, transparent 100%);
+    }
 
-    #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-    #messages::-webkit-scrollbar { width: 4px; }
-    #messages::-webkit-scrollbar-thumb { background: #e0e7ff; border-radius: 4px; }
-    .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; line-height: 1.5; word-break: break-word; }
-    .msg.agent { background: #f3f4f6; color: #1f2937; border-bottom-left-radius: 4px; align-self: flex-start; }
-    .msg.user { background: #4f46e5; color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+    .chat-av {
+      width: 34px; height: 34px; border-radius: 6px;
+      background: var(--gold-dim); border: 1px solid var(--gold-line);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
 
-    .typing { display: flex; gap: 4px; align-items: center; padding: 12px 16px; background: #f3f4f6; border-radius: 18px; border-bottom-left-radius: 4px; align-self: flex-start; width: fit-content; }
-    .typing span { width: 7px; height: 7px; background: #9ca3af; border-radius: 50%; animation: bounce 1.2s infinite; }
-    .typing span:nth-child(2) { animation-delay: 0.2s; }
-    .typing span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)} }
+    .chat-info { flex: 1; }
+    .chat-info-name {
+      font-size: 0.8375rem; font-weight: 600; color: var(--text);
+      font-family: 'DM Sans', sans-serif; letter-spacing: 0.2px;
+    }
+    .chat-info-status { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+    .online-dot { width: 5px; height: 5px; background: var(--success); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .chat-info-status span { font-size: 0.68rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
 
-    .chat-input { display: flex; gap: 8px; padding: 14px 16px; border-top: 1px solid #e5e7eb; background: #fff; }
-    #msg-input { flex: 1; border: 1.5px solid #e5e7eb; border-radius: 24px; padding: 10px 16px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
-    #msg-input:focus { border-color: #4f46e5; }
-    #msg-input:disabled { background: #f9fafb; }
-    #send-btn { background: #4f46e5; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
-    #send-btn:hover { background: #4338ca; }
-    #send-btn:disabled { background: #c7d2fe; cursor: not-allowed; }
-    #send-btn svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .chat-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 4px; display: flex;
+      transition: color 0.2s;
+    }
+    .chat-close:hover { color: var(--text); }
+    .chat-close svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
 
-    @media (max-width: 480px) {
-      nav { padding: 16px 20px; }
-      .hero { padding: 64px 20px 56px; }
-      .section { padding: 56px 20px; }
-      #chat-window { width: calc(100vw - 16px); right: 8px; bottom: 88px; height: calc(100vh - 120px); border-radius: 16px; }
-      #chat-toggle { bottom: 20px; right: 20px; }
+    /* Messages */
+    #messages {
+      flex: 1; overflow-y: auto; padding: 18px 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      background: var(--bg2); scroll-behavior: smooth;
+    }
+    #messages::-webkit-scrollbar { width: 3px; }
+    #messages::-webkit-scrollbar-thumb { background: var(--gold-line); border-radius: 3px; }
+
+    .msg {
+      max-width: 80%; padding: 11px 15px;
+      font-size: 0.8375rem; line-height: 1.55;
+      word-break: break-word;
+      animation: msgIn 0.22s ease forwards;
+    }
+    @keyframes msgIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+    .msg.agent {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px 10px 10px 2px;
+      align-self: flex-start;
+    }
+
+    .msg.user {
+      background: var(--gold);
+      color: #07090d;
+      border-radius: 10px 10px 2px 10px;
+      align-self: flex-end;
+      font-weight: 500;
+    }
+
+    /* Typing */
+    .typing {
+      display: flex; gap: 5px; align-items: center;
+      padding: 12px 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px 10px 10px 2px;
+      align-self: flex-start; width: fit-content;
+    }
+    .typing span { width: 5px; height: 5px; background: var(--muted); border-radius: 50%; animation: tdot 1.3s ease infinite; }
+    .typing span:nth-child(2) { animation-delay: 0.18s; }
+    .typing span:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes tdot { 0%,100%{opacity:0.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(-3px)} }
+
+    /* Input */
+    .chat-input {
+      display: flex; gap: 8px; padding: 12px 14px;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+    }
+
+    #msg-input {
+      flex: 1; background: var(--bg2);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 9px 14px; font-size: 0.8125rem; color: var(--text);
+      font-family: 'DM Sans', sans-serif; outline: none;
+      transition: border-color 0.2s;
+    }
+    #msg-input::placeholder { color: var(--muted); }
+    #msg-input:focus { border-color: var(--gold-line); }
+    #msg-input:disabled { opacity: 0.4; }
+
+    #send-btn {
+      background: var(--gold); border: none; border-radius: 6px;
+      width: 36px; height: 36px; flex-shrink: 0;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    #send-btn:hover { opacity: 0.85; transform: scale(1.06); }
+    #send-btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
+    #send-btn svg { width: 15px; height: 15px; fill: none; stroke: #07090d; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ─────────────────────────────────────────────
+       BOOKING SECTION
+    ───────────────────────────────────────────── */
+    .booking-section { padding: 0 60px 100px; }
+
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 1px; background: var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+
+    .booking-left {
+      background: var(--bg2); padding: 52px 44px;
+      transition: background 0.25s;
+    }
+    .booking-left:hover { background: var(--surface); }
+
+    .booking-left-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+
+    .booking-left h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem; font-weight: 400; color: var(--text);
+      line-height: 1.2; margin-bottom: 14px;
+    }
+    .booking-left h3 em { font-style: italic; color: var(--gold); }
+
+    .booking-left > p {
+      font-size: 0.875rem; color: var(--muted2); line-height: 1.75;
+      font-weight: 300; max-width: 340px; margin-bottom: 36px;
+    }
+
+    .booking-pills {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .booking-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted2); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 3px;
+      background: var(--surface);
+    }
+    .booking-pill.active {
+      color: var(--gold); border-color: var(--gold-line);
+      background: var(--gold-dim);
+    }
+
+    /* Booking right — mock calendar + flow */
+    .booking-right {
+      background: var(--bg2);
+      display: grid; grid-template-rows: 1fr auto;
+    }
+
+    .booking-calendar {
+      padding: 40px 44px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .cal-month {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 500; color: var(--text);
+    }
+    .cal-nav {
+      display: flex; gap: 8px;
+    }
+    .cal-nav-btn {
+      width: 26px; height: 26px; border: 1px solid var(--border);
+      background: var(--surface); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.7rem; cursor: default;
+    }
+
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+    }
+    .cal-day-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem; letter-spacing: 1px; color: var(--muted);
+      text-align: center; padding-bottom: 8px; text-transform: uppercase;
+    }
+    .cal-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; color: var(--muted2); border-radius: 4px;
+      position: relative;
+    }
+    .cal-day.taken { color: var(--muted); }
+    .cal-day.taken::after {
+      content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+      width: 3px; height: 3px; border-radius: 50%; background: var(--gold);
+    }
+    .cal-day.available { color: var(--text); background: var(--surface); border: 1px solid var(--border); }
+    .cal-day.selected { background: var(--gold); color: #07090d; font-weight: 600; }
+    .cal-day.empty { opacity: 0; pointer-events: none; }
+
+    .booking-slots {
+      padding: 24px 44px 40px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .slots-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 2px; color: var(--muted);
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .slots-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .slot {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem; letter-spacing: 0.5px;
+      padding: 7px 14px; border-radius: 4px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted2);
+    }
+    .slot.booked { color: var(--muted); opacity: 0.4; text-decoration: line-through; }
+    .slot.highlight { border-color: var(--gold-line); color: var(--gold); background: var(--gold-dim); }
+
+    /* ─────────────────────────────────────────────
+       FOLLOW-UP SECTION
+    ───────────────────────────────────────────── */
+    .followup-section { padding: 0 60px 100px; }
+
+    .followup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+
+    .fu-block {
+      background: var(--bg2); padding: 52px 44px;
+      transition: background 0.25s;
+    }
+    .fu-block:hover { background: var(--surface); }
+
+    .fu-block-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+
+    .fu-block h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem; font-weight: 400; color: var(--text);
+      line-height: 1.2; margin-bottom: 14px;
+    }
+    .fu-block h3 em { font-style: italic; color: var(--gold); }
+
+    .fu-block > p {
+      font-size: 0.875rem; color: var(--muted2); line-height: 1.75;
+      font-weight: 300; max-width: 380px; margin-bottom: 36px;
+    }
+
+    /* Timeline nudge steps */
+    .nudge-timeline {
+      display: flex; flex-direction: column; gap: 0;
+      border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+    }
+
+    .nudge-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .nudge-item:last-child { border-bottom: none; }
+
+    .nudge-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; color: var(--gold);
+      letter-spacing: 1px; white-space: nowrap;
+      padding-top: 2px; min-width: 48px;
+    }
+
+    .nudge-body .nb-title {
+      font-size: 0.8375rem; font-weight: 500; color: var(--text);
+      margin-bottom: 3px;
+    }
+    .nudge-body .nb-desc {
+      font-size: 0.775rem; color: var(--muted); font-weight: 300;
+      line-height: 1.5;
+    }
+
+    /* Review card (right block) */
+    .review-flow {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .review-step {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .review-step-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid var(--gold-line);
+      background: var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .review-step-dot svg { width: 13px; height: 13px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .review-step-text .rs-title { font-size: 0.8rem; font-weight: 500; color: var(--text); }
+    .review-step-text .rs-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; font-weight: 300; }
+
+    .review-arrow {
+      display: flex; justify-content: center;
+      color: var(--muted); font-size: 0.7rem;
+    }
+
+    /* ─────────────────────────────────────────────
+       MOBILE
+    ───────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 40px; }
+      .hero::after { display: none; }
+      .hero-left { padding-left: 0; }
+      .hero-right { padding-top: 0; }
+      .cards-row { grid-template-columns: 1fr 1fr; }
+      .divider { padding: 0 24px; flex-direction: column; gap: 0; }
+      .divider-item { border-right: none; border-bottom: 1px solid var(--border); width: 100%; padding: 24px 0 !important; }
+      .divider-item:last-child { border-bottom: none; }
+      .section-wrap { padding: 72px 24px; }
+      .steps { grid-template-columns: 1fr; }
+      .features-section { padding: 0 24px 72px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feat.large, .feat.wide { grid-column: span 1; }
+      .booking-section { padding: 0 24px 72px; }
+      .booking-grid { grid-template-columns: 1fr; }
+      .followup-section { padding: 0 24px 72px; }
+      .followup-grid { grid-template-columns: 1fr; }
+      footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
+      #chat-window { width: calc(100vw - 20px); right: 10px; bottom: 88px; height: calc(100vh - 110px); border-radius: 10px; }
+      #chat-toggle { right: 16px; bottom: 20px; }
+      #demo-switcher { right: 10px; bottom: 148px; }
+      .demo-label { display: none; }
     }
   </style>
 </head>
 <body>
 
+<!-- ── Nav ── -->
 <nav>
-  <div class="logo">Cortex Respond</div>
-  <button class="nav-cta" onclick="openChat()">See It Live</button>
+  <div class="logo">
+    <span class="logo-name">Cortex Respond</span>
+    <span class="logo-tag">AI Agent</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="#how">Process</a>
+      <a href="#features">Features</a>
+      <a href="#booking">Booking</a>
+      <a href="#followup">Follow-up</a>
+    </div>
+    <button class="nav-cta" onclick="openChat()">Live demo</button>
+  </div>
 </nav>
 
+<!-- ── Hero ── -->
 <section class="hero">
-  <h1>Never Miss a Lead <span>Again</span></h1>
-  <p>AI-powered inbound agent that qualifies and scores your leads 24/7 — so you only call back the ones worth your time.</p>
-  <div class="hero-btns">
-    <button class="btn-primary" onclick="openChat()">Try the Demo</button>
-    <a href="#how" class="btn-secondary">How It Works</a>
-  </div>
-</section>
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Inbound Lead Intelligence</span>
+    </div>
 
-<section class="section" id="how">
-  <p class="section-label">Simple Process</p>
-  <h2>From inquiry to qualified lead in minutes</h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Customer Messages You</h3>
-      <p>A visitor lands on your site and starts chatting. The AI greets them instantly — no wait time, no missed messages.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>AI Qualifies Instantly</h3>
-      <p>Through natural conversation, the agent collects name, phone, email, service interest, budget, and timeline.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>You Get Scored Leads</h3>
-      <p>Every completed conversation is scored 1–10 and logged to your Google Sheet. Follow up with confidence.</p>
+    <h1>
+      Your leads.<br>
+      <em>Qualified.</em><br>
+      <strong>Automatically.</strong>
+    </h1>
+
+    <p class="hero-desc">
+      An AI agent that handles every inbound inquiry the moment it arrives — collects contact details, scores urgency and budget, and delivers ready-to-close leads to your CRM.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openChat()">Try the demo</button>
+      <button class="btn-link" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See how it works</button>
     </div>
   </div>
-</section>
 
-<section class="section features-bg">
-  <p class="section-label">What You Get</p>
-  <h2>Everything a great receptionist does — automatically</h2>
-  <div class="features">
-    <div class="feature">
-      <div class="feature-icon">⚡</div>
-      <h3>24/7 Instant Response</h3>
-      <p>Responds to every inquiry the moment it comes in — nights, weekends, public holidays.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🎯</div>
-      <h3>Lead Scoring</h3>
-      <p>Each lead gets a 1–10 score based on urgency and budget alignment, so you prioritize the right follow-ups.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">💬</div>
-      <h3>FAQ Handling</h3>
-      <p>Answers common questions about your services, pricing, location, and hours — automatically.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">📊</div>
-      <h3>Google Sheets Log</h3>
-      <p>Every qualified lead lands in your Google Sheet with full contact details and a conversation summary.</p>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p>Powered by <strong>Cortex Labs</strong> &mdash; Building AI agents for service businesses</p>
-</footer>
-
-<button id="chat-toggle" aria-label="Open chat" onclick="toggleChat()">
-  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-</button>
-
-<div id="chat-window">
-  <div class="chat-header">
-    <div class="chat-avatar">🦷</div>
-    <div class="chat-header-info">
-      <h3>Lux Dental Clinic</h3>
-      <div class="chat-status">
-        <div class="online-dot"></div>
-        <span>Online now</span>
+  <div class="hero-right">
+    <div class="cards-row">
+      <div class="hero-card">
+        <div class="card-label">Response Time</div>
+        <div class="card-value">&lt;2 <span class="unit">sec</span></div>
+        <div class="card-sub">Every inquiry, every time</div>
+      </div>
+      <div class="hero-card">
+        <div class="card-label">Availability</div>
+        <div class="card-value">24 <span class="unit">/ 7</span></div>
+        <div class="card-sub">No staff required</div>
       </div>
     </div>
+    <div class="hero-card">
+      <div class="card-label">Lead Score Range</div>
+      <div class="card-value">1 <span class="unit" style="font-size:1.4rem">—</span> 10</div>
+      <div class="card-sub">Urgency × budget alignment, scored per conversation</div>
+    </div>
+    <div class="hero-card" style="border-color: var(--gold-line);">
+      <div class="card-label">Missed Inquiries</div>
+      <div class="card-value" style="color: var(--gold);">0</div>
+      <div class="card-sub">Every visitor gets an immediate response</div>
+    </div>
   </div>
+</section>
+
+<!-- ── Divider Stats ── -->
+<div class="divider">
+  <div class="divider-item">
+    <div class="divider-num">01</div>
+    <div class="divider-text">
+      <div class="dt">Instant greeting</div>
+      <div class="ds">No wait. No "we'll be in touch."</div>
+    </div>
+  </div>
+  <div class="divider-item">
+    <div class="divider-num">02</div>
+    <div class="divider-text">
+      <div class="dt">Natural qualification</div>
+      <div class="ds">Conversation, not a form.</div>
+    </div>
+  </div>
+  <div class="divider-item">
+    <div class="divider-num">03</div>
+    <div class="divider-text">
+      <div class="dt">Scored & logged</div>
+      <div class="ds">Hits your sheet. Ready to follow up.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── How It Works ── -->
+<div class="section-wrap" id="how">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Process</div>
+      <h2 class="section-title">From inquiry to <em>qualified lead</em><br>in under three minutes</h2>
+    </div>
+    <div class="section-count">03</div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-idx">STEP_01</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <h3>Customer reaches out</h3>
+      <p>A visitor clicks the chat widget. The AI agent greets them within seconds — no waiting, no missed messages, any hour of the day.</p>
+    </div>
+    <div class="step">
+      <div class="step-idx">STEP_02</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="11"/></svg></div>
+      <h3>AI qualifies in real time</h3>
+      <p>Through natural conversation the agent collects name, contact info, service interest, budget, and timeline — without sounding robotic.</p>
+    </div>
+    <div class="step">
+      <div class="step-idx">STEP_03</div>
+      <div class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+      <h3>Lead hits your CRM</h3>
+      <p>Each completed conversation is scored 1–10, summarised, and appended to your Google Sheet automatically. Open it and call.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Features ── -->
+<div class="features-section" id="features">
+  <div class="section-header" style="margin-bottom:48px; padding-bottom:24px;">
+    <div>
+      <div class="section-label">Capabilities</div>
+      <h2 class="section-title">Built for businesses<br>that <em>can't afford</em> to miss a lead</h2>
+    </div>
+  </div>
+
+  <div class="features-grid">
+    <div class="feat large">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <h3>Always-on instant response</h3>
+      <p>The AI responds to every inquiry the moment it arrives. Nights, weekends, public holidays — it doesn't matter. No lead goes cold because no one was available.</p>
+      <span class="feat-tag">ZERO_LATENCY</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="11"/></svg></div>
+      <h3>Lead scoring</h3>
+      <p>Each lead is scored 1–10 on urgency and budget fit so you know exactly who to call first.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <h3>FAQ handling</h3>
+      <p>Answers pricing, location, and service questions automatically — then continues qualifying.</p>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+      <h3>CRM</h3>
+      <p>Every lead logged with contacts, score, and summary. No extra tools, no setup cost.</p>
+    </div>
+    <div class="feat wide">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="12" cy="16" r="2"/></svg></div>
+      <h3>Automated Booking</h3>
+      <p>Once qualified, the agent offers available time slots directly in chat. The visitor picks a time and it's confirmed — no back-and-forth, no manual diary management.</p>
+      <span class="feat-tag">IN_CHAT_SCHEDULING</span>
+    </div>
+    <div class="feat">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l1.14-1.14a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+      <h3>Smart Follow-up</h3>
+      <p>Incomplete inquiries trigger automated nudges at 1h, 3h, and 12h. Completed leads get a review request 48 hours after their appointment.</p>
+      <span class="feat-tag">AUTO_NURTURE</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Booking ── -->
+<div class="booking-section" id="booking">
+  <div class="section-header" style="margin-bottom:48px; padding-bottom:24px;">
+    <div>
+      <div class="section-label">Scheduling</div>
+      <h2 class="section-title">From conversation to <em>confirmed booking</em></h2>
+    </div>
+  </div>
+
+  <div class="booking-grid">
+
+    <!-- Left: description -->
+    <div class="booking-left">
+      <div class="booking-left-label">Automated Booking</div>
+      <h3>Your AI agent<br><em>books the slot.</em></h3>
+      <p>Once a lead is qualified, the agent offers available time slots directly in the chat. The visitor picks a time, and it's confirmed — no back-and-forth, no manual diary management.</p>
+
+      <div class="booking-pills">
+        <span class="booking-pill active">In-chat scheduling</span>
+        <span class="booking-pill active">Availability sync</span>
+        <span class="booking-pill">Google Calendar</span>
+        <span class="booking-pill">Calendly</span>
+        <span class="booking-pill">Custom slots</span>
+        <span class="booking-pill active">Auto-confirm</span>
+        <span class="booking-pill active">CRM logged</span>
+        <span class="booking-pill">Reminders</span>
+      </div>
+    </div>
+
+    <!-- Right: mock calendar UI -->
+    <div class="booking-right">
+      <div class="booking-calendar">
+        <div class="cal-header">
+          <span class="cal-month">April 2025</span>
+          <div class="cal-nav">
+            <div class="cal-nav-btn">&#8249;</div>
+            <div class="cal-nav-btn">&#8250;</div>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <!-- Day labels -->
+          <div class="cal-day-label">Mo</div>
+          <div class="cal-day-label">Tu</div>
+          <div class="cal-day-label">We</div>
+          <div class="cal-day-label">Th</div>
+          <div class="cal-day-label">Fr</div>
+          <div class="cal-day-label">Sa</div>
+          <div class="cal-day-label">Su</div>
+          <!-- Week 1 -->
+          <div class="cal-day empty"></div>
+          <div class="cal-day taken">1</div>
+          <div class="cal-day available">2</div>
+          <div class="cal-day taken">3</div>
+          <div class="cal-day available">4</div>
+          <div class="cal-day taken">5</div>
+          <div class="cal-day taken">6</div>
+          <!-- Week 2 -->
+          <div class="cal-day available">7</div>
+          <div class="cal-day taken">8</div>
+          <div class="cal-day available">9</div>
+          <div class="cal-day selected">10</div>
+          <div class="cal-day available">11</div>
+          <div class="cal-day taken">12</div>
+          <div class="cal-day taken">13</div>
+          <!-- Week 3 -->
+          <div class="cal-day available">14</div>
+          <div class="cal-day available">15</div>
+          <div class="cal-day taken">16</div>
+          <div class="cal-day available">17</div>
+          <div class="cal-day taken">18</div>
+          <div class="cal-day available">19</div>
+          <div class="cal-day taken">20</div>
+          <!-- Week 4 -->
+          <div class="cal-day taken">21</div>
+          <div class="cal-day available">22</div>
+          <div class="cal-day available">23</div>
+          <div class="cal-day taken">24</div>
+          <div class="cal-day available">25</div>
+          <div class="cal-day taken">26</div>
+          <div class="cal-day available">27</div>
+          <!-- Week 5 -->
+          <div class="cal-day taken">28</div>
+          <div class="cal-day available">29</div>
+          <div class="cal-day taken">30</div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+        </div>
+      </div>
+
+      <div class="booking-slots">
+        <div class="slots-label">Available slots — Thu 10 Apr</div>
+        <div class="slots-row">
+          <div class="slot booked">09:00</div>
+          <div class="slot booked">10:00</div>
+          <div class="slot highlight">11:00</div>
+          <div class="slot">12:00</div>
+          <div class="slot booked">14:00</div>
+          <div class="slot">15:00</div>
+          <div class="slot">16:00</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Follow-up ── -->
+<div class="followup-section" id="followup">
+  <div class="section-header" style="margin-bottom:48px; padding-bottom:24px;">
+    <div>
+      <div class="section-label">Automation</div>
+      <h2 class="section-title">Nothing falls through <em>the cracks</em></h2>
+    </div>
+  </div>
+
+  <div class="followup-grid">
+
+    <!-- Left: Re-engagement nudges -->
+    <div class="fu-block">
+      <div class="fu-block-label">Smart Re-engagement</div>
+      <h3>Incomplete inquiry?<br><em>We follow up.</em></h3>
+      <p>When a visitor starts a conversation but doesn't complete it, the system automatically queues your team for outreach — at 1 hour, 3 hours, and 12 hours after the drop-off.</p>
+
+      <div class="nudge-timeline">
+        <div class="nudge-item">
+          <div class="nudge-time">+1H</div>
+          <div class="nudge-body">
+            <div class="nb-title">First nudge queued</div>
+            <div class="nb-desc">Partial contact details extracted and logged to Follow Up Queue.</div>
+          </div>
+        </div>
+        <div class="nudge-item">
+          <div class="nudge-time">+3H</div>
+          <div class="nudge-body">
+            <div class="nb-title">Second nudge queued</div>
+            <div class="nb-desc">Escalated priority — lead still warm, re-engagement recommended.</div>
+          </div>
+        </div>
+        <div class="nudge-item">
+          <div class="nudge-time">+12H</div>
+          <div class="nudge-body">
+            <div class="nb-title">Final nudge queued</div>
+            <div class="nb-desc">Last window to re-engage before the inquiry goes cold.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Post-appointment review -->
+    <div class="fu-block">
+      <div class="fu-block-label">Post-Appointment Follow-Up</div>
+      <h3>Close the loop.<br><em>Earn the review.</em></h3>
+      <p>48 hours after a lead is captured and the appointment is expected to have taken place, your team is prompted to reach out and request a Google Review — building social proof on autopilot.</p>
+
+      <div class="review-flow">
+        <div class="review-step">
+          <div class="review-step-dot">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="review-step-text">
+            <div class="rs-title">Lead qualified &amp; logged</div>
+            <div class="rs-sub">Conversation complete — lead hits Google Sheet</div>
+          </div>
+        </div>
+        <div class="review-arrow">&#8595;</div>
+        <div class="review-step">
+          <div class="review-step-dot">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="review-step-text">
+            <div class="rs-title">+48 hours</div>
+            <div class="rs-sub">Follow-up task queued in the Follow Up sheet tab</div>
+          </div>
+        </div>
+        <div class="review-arrow">&#8595;</div>
+        <div class="review-step">
+          <div class="review-step-dot">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="review-step-text">
+            <div class="rs-title">Google Review requested</div>
+            <div class="rs-sub">Your team reaches out to a satisfied client — every time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-logo">Powered by <strong>Cortex Labs</strong></div>
+  <div class="footer-text">Built with <span>Claude (Anthropic)</span> · FastAPI · Google Sheets</div>
+</footer>
+
+<!-- ── Demo Switcher ── -->
+<div id="demo-switcher">
+  <span class="demo-label">Demo</span>
+  <button class="demo-btn active" data-config="realestate" onclick="switchConfig('realestate')">Real Estate</button>
+  <button class="demo-btn" data-config="dental" onclick="switchConfig('dental')">Dental</button>
+</div>
+
+<!-- ── Chat Toggle ── -->
+<button id="chat-toggle" aria-label="Open chat" onclick="toggleChat()">
+  <div class="toggle-icon">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </div>
+  <span class="toggle-label">Chat with agent</span>
+</button>
+
+<!-- ── Chat Window ── -->
+<div id="chat-window">
+  <div class="chat-header">
+    <div class="chat-av" style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;color:var(--gold);letter-spacing:0.5px;">AP</div>
+    <div class="chat-info">
+      <div class="chat-info-name">Apex Properties</div>
+      <div class="chat-info-status">
+        <div class="online-dot"></div>
+        <span>ONLINE · AI_AGENT</span>
+      </div>
+    </div>
+    <button class="chat-close" onclick="closeChat()" aria-label="Close">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
   <div id="messages"></div>
+
   <div class="chat-input">
     <input type="text" id="msg-input" placeholder="Type a message..." autocomplete="off" />
     <button id="send-btn" aria-label="Send">
@@ -199,9 +1210,34 @@
 </div>
 
 <script>
-  let sessionId = null;
-  let chatOpen = false;
-  let initialized = false;
+  let sessionId = null, chatOpen = false, initialized = false, configKey = 'realestate';
+
+  const configMeta = {
+    realestate: { name: 'Apex Properties', avatar: 'AP' },
+    dental:     { name: 'SmileCraft Dental', avatar: 'SC' },
+  };
+
+  function switchConfig(key) {
+    if (key === configKey) return;
+    configKey = key;
+
+    // Update button states
+    document.querySelectorAll('.demo-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.config === key);
+    });
+
+    // Update chat header to reflect new business
+    const meta = configMeta[key];
+    document.querySelector('.chat-info-name').textContent = meta.name;
+    document.querySelector('.chat-av').textContent = meta.avatar;
+
+    // Reset session so the new config takes effect from the start
+    sessionId = null;
+    initialized = false;
+    document.getElementById('messages').innerHTML = '';
+
+    if (chatOpen) initChat();
+  }
 
   function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -233,14 +1269,14 @@
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, message: '__init__' }),
+        body: JSON.stringify({ session_id: sessionId, message: '__init__', config_key: configKey }),
       });
       const data = await res.json();
       hideTyping();
       appendMsg('agent', data.reply);
     } catch {
       hideTyping();
-      appendMsg('agent', "Hi there! How can I help you today?");
+      appendMsg('agent', "Hi! How can I help you today?");
     }
     setInputDisabled(false);
     document.getElementById('msg-input').focus();
@@ -258,15 +1294,15 @@
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, message: text }),
+        body: JSON.stringify({ session_id: sessionId, message: text, config_key: configKey }),
       });
-      if (!res.ok) throw new Error('Network error');
+      if (!res.ok) throw new Error();
       const data = await res.json();
       hideTyping();
       appendMsg('agent', data.reply);
     } catch {
       hideTyping();
-      appendMsg('agent', "Sorry, I'm having a bit of trouble right now. Please try again in a moment.");
+      appendMsg('agent', "Having trouble connecting — please try again.");
     }
     setInputDisabled(false);
     document.getElementById('msg-input').focus();
@@ -290,13 +1326,11 @@
     msgs.appendChild(typingEl);
     msgs.scrollTop = msgs.scrollHeight;
   }
-  function hideTyping() {
-    if (typingEl) { typingEl.remove(); typingEl = null; }
-  }
+  function hideTyping() { if (typingEl) { typingEl.remove(); typingEl = null; } }
 
-  function setInputDisabled(disabled) {
-    document.getElementById('msg-input').disabled = disabled;
-    document.getElementById('send-btn').disabled = disabled;
+  function setInputDisabled(d) {
+    document.getElementById('msg-input').disabled = d;
+    document.getElementById('send-btn').disabled = d;
   }
 
   document.getElementById('msg-input').addEventListener('keydown', e => {

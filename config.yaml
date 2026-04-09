@@ -1,42 +1,43 @@
 business:
-  name: "Lux Dental Clinic"
-  industry: "Healthcare"
-  tagline: "Premium dental care in Lekki, Lagos"
-  greeting: "Hi there! Welcome to Lux Dental Clinic. How can I help you today?"
+  name: "Apex Properties"
+  industry: "Real Estate"
+  tagline: "Premium property sales and lettings in Lagos"
+  greeting: "Hi! Welcome to Apex Properties. What can I help you with today?"
   brand_color: "#4F46E5"
 
 services:
-  - name: "Teeth Whitening"
-    price_range: "₦50,000 - ₦120,000"
-    duration: "1-2 hours"
-  - name: "Dental Implants"
-    price_range: "₦300,000 - ₦800,000"
-    duration: "Multiple visits"
-  - name: "General Checkup"
-    price_range: "₦15,000 - ₦25,000"
-    duration: "30-45 minutes"
-  - name: "Root Canal"
-    price_range: "₦80,000 - ₦200,000"
-    duration: "1-2 visits"
-  - name: "Braces / Orthodontics"
-    price_range: "₦400,000 - ₦1,200,000"
-    duration: "12-24 months"
+  - name: "Property Purchase"
+    price_range: "₦25,000,000 and above"
+    duration: "2-8 weeks to close"
+  - name: "Property Letting / Rental"
+    price_range: "₦800,000 - ₦15,000,000 per annum"
+    duration: "1-2 weeks to move in"
+  - name: "Property Sale (Listing)"
+    price_range: "5% agency commission"
+    duration: "4-12 weeks average"
+  - name: "Property Valuation"
+    price_range: "₦50,000 - ₦150,000"
+    duration: "24-48 hours"
+  - name: "Investment Advisory"
+    price_range: "Free consultation"
+    duration: "1 hour session"
 
 faqs:
-  - q: "Where are you located?"
-    a: "We're at 15 Admiralty Way, Lekki Phase 1, Lagos."
-  - q: "What are your working hours?"
-    a: "Monday-Friday 8am-6pm, Saturday 9am-3pm. Closed Sundays."
-  - q: "Do you accept HMO?"
-    a: "Yes — Leadway, AXA Mansard, Hygeia, and Reliance HMO."
-  - q: "Is parking available?"
-    a: "Yes, free parking is available for all patients."
-  - q: "Do you handle emergencies?"
-    a: "Yes, we handle dental emergencies during working hours. Call us directly for urgent cases."
+  - q: "Where are your listings located?"
+    a: "We cover Lekki, Victoria Island, Ikoyi, Ajah, Ikeja GRA, and Magodo."
+  - q: "Do you handle shortlets?"
+    a: "Yes, shortlet options in Lekki and VI from ₦80,000 per night."
+  - q: "Can you help with documentation?"
+    a: "Yes — C of O, deed of assignment, and all transaction documentation."
+  - q: "Do you work with mortgage?"
+    a: "Yes, we partner with several banks and mortgage institutions."
+  - q: "What are your office hours?"
+    a: "Monday–Friday 8am–6pm, Saturday 10am–3pm."
 
 scoring:
   rules: |
     Score the lead 1-10 based on:
-    - Urgency: "today/tomorrow/this week" = high, "this month" = medium, "just browsing/no timeline" = low
-    - Budget: if their budget aligns with or exceeds the service price range = high, below range = low, not mentioned = medium
-    - Combine both factors. A lead wanting service this week with matching budget = 8-10. Interested but flexible timing = 5-7. Just browsing with no budget info = 1-4.
+    - Urgency: "immediately/this month" = high, "next 1-3 months" = medium, "just looking/no timeline" = low
+    - Budget: clearly stated budget matching or above price range = high, vague or below range = medium/low
+    - Intent: buying or renting with clear requirements = higher score than general enquiry
+    - Combine all factors. Ready buyer with matching budget = 8-10. Interested but timeline unclear = 5-7. Just browsing = 1-4.
