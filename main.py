@@ -346,7 +346,7 @@ async def chat(req: ChatRequest):
     try:
         response = anthropic_client.messages.create(
             model="claude-sonnet-4-20250514",
-            max_tokens=1024,
+            max_tokens=2048,
             system=build_system_prompt(active_config),
             messages=session["messages"],
         )
