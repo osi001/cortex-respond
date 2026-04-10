@@ -376,22 +376,20 @@
     ───────────────────────────────────────────── */
     /* Demo switcher */
     #demo-switcher {
-      position: fixed; bottom: 96px; right: 32px; z-index: 1001;
-      display: flex; gap: 6px; align-items: center;
-      background: rgba(7,9,13,0.85);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(16px);
-      border-radius: 6px; padding: 5px;
+      display: flex; gap: 5px; align-items: center;
+      padding: 8px 14px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
     }
     .demo-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.55rem; letter-spacing: 2px; color: var(--muted);
-      text-transform: uppercase; padding: 0 6px; white-space: nowrap;
+      text-transform: uppercase; padding-right: 4px; white-space: nowrap;
     }
     .demo-btn {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase;
-      padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border);
+      font-size: 0.58rem; letter-spacing: 1px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 3px; border: 1px solid var(--border);
       background: transparent; color: var(--muted2); cursor: pointer;
       transition: all 0.18s;
     }
@@ -793,8 +791,6 @@
       footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
       #chat-window { width: calc(100vw - 20px); right: 10px; bottom: 88px; height: calc(100vh - 110px); border-radius: 10px; }
       #chat-toggle { right: 16px; bottom: 20px; }
-      #demo-switcher { right: 10px; bottom: 148px; }
-      .demo-label { display: none; }
     }
   </style>
 </head>
@@ -966,6 +962,38 @@
       <h3>Smart Follow-up</h3>
       <p>Incomplete inquiries trigger automated nudges at 1h, 3h, and 12h. Completed leads get a review request 48 hours after their appointment.</p>
       <span class="feat-tag">AUTO_NURTURE</span>
+    </div>
+    <div class="feat large" style="grid-column: span 3; padding: 36px 40px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:32px;">
+        <div>
+          <div class="feat-icon" style="margin-bottom:14px;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <h3 style="font-size:1.3rem; margin-bottom:8px;">Meets your customers where they are</h3>
+          <p style="max-width:380px;">The same AI agent works across every channel — website chat, WhatsApp, and Instagram DMs. One setup, every touchpoint covered.</p>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:12px; padding:16px 24px; background:var(--surface); border:1px solid var(--border); border-radius:6px; min-width:160px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#25D366"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.118 1.524 5.85L.057 23.5l5.797-1.522A11.938 11.938 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.895 0-3.668-.516-5.189-1.415l-.371-.221-3.844 1.01 1.027-3.748-.242-.384A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill="#25D366"/></svg>
+            <div>
+              <div style="font-size:0.8rem;font-weight:600;color:var(--text);">WhatsApp</div>
+              <div style="font-size:0.7rem;color:var(--muted);margin-top:1px;">Business API</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; padding:16px 24px; background:var(--surface); border:1px solid var(--border); border-radius:6px; min-width:160px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#ig)"/><circle cx="12" cy="12" r="4.5" stroke="white" stroke-width="1.5" fill="none"/><circle cx="17" cy="7" r="1" fill="white"/><defs><radialGradient id="ig" cx="30%" cy="100%" r="120%"><stop offset="0%" stop-color="#fdf497"/><stop offset="25%" stop-color="#fd5949"/><stop offset="50%" stop-color="#d6249f"/><stop offset="100%" stop-color="#285AEB"/></radialGradient></defs></svg>
+            <div>
+              <div style="font-size:0.8rem;font-weight:600;color:var(--text);">Instagram</div>
+              <div style="font-size:0.7rem;color:var(--muted);margin-top:1px;">DMs &amp; comments</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; padding:16px 24px; background:var(--surface); border:1px solid var(--gold-line); border-radius:6px; min-width:160px; background:var(--gold-dim);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <div>
+              <div style="font-size:0.8rem;font-weight:600;color:var(--gold);">Website Chat</div>
+              <div style="font-size:0.7rem;color:var(--muted);margin-top:1px;">Embed widget</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1168,13 +1196,6 @@
   <div class="footer-text">Built with <span>Claude (Anthropic)</span> · FastAPI · Google Sheets</div>
 </footer>
 
-<!-- ── Demo Switcher ── -->
-<div id="demo-switcher">
-  <span class="demo-label">Demo</span>
-  <button class="demo-btn active" data-config="realestate" onclick="switchConfig('realestate')">Real Estate</button>
-  <button class="demo-btn" data-config="dental" onclick="switchConfig('dental')">Dental</button>
-</div>
-
 <!-- ── Chat Toggle ── -->
 <button id="chat-toggle" aria-label="Open chat" onclick="toggleChat()">
   <div class="toggle-icon">
@@ -1186,17 +1207,22 @@
 <!-- ── Chat Window ── -->
 <div id="chat-window">
   <div class="chat-header">
-    <div class="chat-av" style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;color:var(--gold);letter-spacing:0.5px;">AP</div>
     <div class="chat-info">
       <div class="chat-info-name">Apex Properties</div>
       <div class="chat-info-status">
         <div class="online-dot"></div>
-        <span>ONLINE · AI_AGENT</span>
+        <span>ONLINE</span>
       </div>
     </div>
     <button class="chat-close" onclick="closeChat()" aria-label="Close">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
+  </div>
+
+  <div id="demo-switcher">
+    <span class="demo-label">Demo</span>
+    <button class="demo-btn active" data-config="realestate" onclick="switchConfig('realestate')">Real Estate</button>
+    <button class="demo-btn" data-config="dental" onclick="switchConfig('dental')">Dental</button>
   </div>
 
   <div id="messages"></div>
@@ -1213,8 +1239,8 @@
   let sessionId = null, chatOpen = false, initialized = false, configKey = 'realestate';
 
   const configMeta = {
-    realestate: { name: 'Apex Properties', avatar: 'AP' },
-    dental:     { name: 'SmileCraft Dental', avatar: 'SC' },
+    realestate: { name: 'Apex Properties' },
+    dental:     { name: 'SmileCraft Dental' },
   };
 
   function switchConfig(key) {
@@ -1229,7 +1255,6 @@
     // Update chat header to reflect new business
     const meta = configMeta[key];
     document.querySelector('.chat-info-name').textContent = meta.name;
-    document.querySelector('.chat-av').textContent = meta.avatar;
 
     // Reset session so the new config takes effect from the start
     sessionId = null;
