@@ -329,6 +329,12 @@
     .feat:hover { background: var(--surface); }
     .feat.large { grid-column: span 3; }
     .feat.wide  { grid-column: span 2; }
+    .feat.integrations-card { grid-column: span 3; }
+    .integrations-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 32px;
+    }
+    .integrations-channels { display: flex; gap: 12px; flex-wrap: wrap; }
 
     .feat-icon {
       width: 36px; height: 36px; margin-bottom: 20px;
@@ -783,7 +789,10 @@
       .steps { grid-template-columns: 1fr; }
       .features-section { padding: 0 24px 72px; }
       .features-grid { grid-template-columns: 1fr; }
-      .feat.large, .feat.wide { grid-column: span 1; }
+      .feat.large, .feat.wide, .feat.integrations-card { grid-column: span 1; }
+      .integrations-inner { flex-direction: column; align-items: flex-start; }
+      .integrations-channels { flex-direction: column; width: 100%; }
+      .integrations-channels > div { width: 100%; }
       .booking-section { padding: 0 24px 72px; }
       .booking-grid { grid-template-columns: 1fr; }
       .followup-section { padding: 0 24px 72px; }
@@ -963,14 +972,14 @@
       <p>Incomplete inquiries trigger automated nudges at 1h, 3h, and 12h. Completed leads get a review request 48 hours after their appointment.</p>
       <span class="feat-tag">AUTO_NURTURE</span>
     </div>
-    <div class="feat large" style="grid-column: span 3; padding: 36px 40px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:32px;">
+    <div class="feat integrations-card" style="padding: 36px 40px;">
+      <div class="integrations-inner">
         <div>
           <div class="feat-icon" style="margin-bottom:14px;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
           <h3 style="font-size:1.3rem; margin-bottom:8px;">Meets your customers where they are</h3>
           <p style="max-width:380px;">The same AI agent works across every channel: website chat, WhatsApp, and Instagram DMs. One setup, every touchpoint covered.</p>
         </div>
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div class="integrations-channels">
           <div style="display:flex; align-items:center; gap:12px; padding:16px 24px; background:var(--surface); border:1px solid var(--border); border-radius:6px; min-width:160px;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#25D366"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.118 1.524 5.85L.057 23.5l5.797-1.522A11.938 11.938 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.895 0-3.668-.516-5.189-1.415l-.371-.221-3.844 1.01 1.027-3.748-.242-.384A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" fill="#25D366"/></svg>
             <div>
