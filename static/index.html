@@ -378,6 +378,105 @@
     .footer-text span { color: var(--gold); }
 
     /* ─────────────────────────────────────────────
+       LEAD PREVIEW DRAWER
+    ───────────────────────────────────────────── */
+    #lead-preview {
+      position: fixed; bottom: 96px; left: 32px; z-index: 999;
+      width: 320px;
+      background: var(--surface);
+      border: 1px solid var(--gold-line);
+      border-radius: 10px;
+      box-shadow: 0 0 0 1px var(--border), 0 24px 48px rgba(0,0,0,0.6), 0 0 32px rgba(201,168,76,0.06);
+      overflow: hidden;
+      transform: translateY(16px) scale(0.97); opacity: 0;
+      pointer-events: none;
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.28s ease;
+    }
+    #lead-preview.open {
+      transform: translateY(0) scale(1); opacity: 1; pointer-events: all;
+    }
+
+    .lead-preview-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .lead-preview-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--gold);
+    }
+    .lead-preview-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 2px; display: flex;
+      transition: color 0.2s;
+    }
+    .lead-preview-close:hover { color: var(--text); }
+    .lead-preview-close svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
+
+    .lead-preview-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+
+    .lead-row {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 10px 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+    .lead-row-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .lead-row-value {
+      font-size: 0.825rem; color: var(--text); font-weight: 500;
+      word-break: break-word;
+    }
+    .lead-row-value.declined { color: var(--muted); font-style: italic; }
+
+    .lead-score-badge {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-line);
+      border-radius: 5px;
+    }
+    .lead-score-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
+    }
+    .lead-score-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 600; color: var(--gold); line-height: 1;
+    }
+
+    .lead-summary {
+      font-size: 0.775rem; color: var(--muted2); line-height: 1.6;
+      padding: 10px 12px;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 5px;
+    }
+
+    #lead-trigger {
+      position: fixed; bottom: 32px; left: 32px; z-index: 1000;
+      display: none;
+      align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--gold-line);
+      color: var(--gold);
+      padding: 0 18px; height: 44px; border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(201,168,76,0.15);
+      transition: background 0.2s, transform 0.2s;
+      animation: fadeSlideUp 0.4s ease forwards;
+    }
+    #lead-trigger:hover { background: var(--gold-dim); transform: translateY(-1px); }
+    #lead-trigger svg { width: 14px; height: 14px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    @keyframes fadeSlideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ─────────────────────────────────────────────
        CHAT TOGGLE
     ───────────────────────────────────────────── */
     /* Demo switcher */
@@ -800,6 +899,8 @@
       footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
       #chat-window { width: calc(100vw - 20px); right: 10px; bottom: 88px; height: calc(100vh - 110px); border-radius: 10px; }
       #chat-toggle { right: 16px; bottom: 20px; }
+      #lead-trigger { left: 16px; bottom: 20px; }
+      #lead-preview { left: 10px; right: 10px; width: auto; bottom: 76px; }
     }
   </style>
 </head>
@@ -1204,6 +1305,22 @@
   <div class="footer-logo">Powered by <strong>Cortex Labs</strong></div>
 </footer>
 
+<!-- ── Lead Preview ── -->
+<button id="lead-trigger" onclick="toggleLeadPreview()">
+  <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+  View captured lead
+</button>
+
+<div id="lead-preview">
+  <div class="lead-preview-header">
+    <span class="lead-preview-title">Lead Captured</span>
+    <button class="lead-preview-close" onclick="toggleLeadPreview()">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="lead-preview-body" id="lead-preview-body"></div>
+</div>
+
 <!-- ── Chat Toggle ── -->
 <button id="chat-toggle" aria-label="Open chat" onclick="toggleChat()">
   <div class="toggle-icon">
@@ -1244,7 +1361,49 @@
 </div>
 
 <script>
-  let sessionId = null, chatOpen = false, initialized = false, configKey = 'realestate';
+  let sessionId = null, chatOpen = false, initialized = false, configKey = 'realestate', leadPreviewOpen = false;
+
+  function toggleLeadPreview() {
+    leadPreviewOpen = !leadPreviewOpen;
+    document.getElementById('lead-preview').classList.toggle('open', leadPreviewOpen);
+  }
+
+  function showLeadPreview(lead) {
+    const body = document.getElementById('lead-preview-body');
+    const fields = [
+      { label: 'Name',     value: lead.name },
+      { label: 'Phone',    value: lead.phone },
+      { label: 'Email',    value: lead.email },
+      { label: 'Service',  value: lead.service_needed },
+      { label: 'Budget',   value: lead.budget },
+      { label: 'Urgency',  value: lead.urgency },
+    ];
+
+    body.innerHTML = fields.map(f => {
+      const declined = !f.value || f.value.toLowerCase() === 'declined';
+      return `<div class="lead-row">
+        <div class="lead-row-label">${f.label}</div>
+        <div class="lead-row-value${declined ? ' declined' : ''}">${declined ? 'declined' : f.value}</div>
+      </div>`;
+    }).join('') + `
+    <div class="lead-score-badge">
+      <div>
+        <div class="lead-score-label">Lead Score</div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:3px;">${lead.score_reasoning || ''}</div>
+      </div>
+      <div class="lead-score-num">${lead.score}<span style="font-size:1rem;color:var(--muted)">/10</span></div>
+    </div>
+    <div class="lead-summary">${lead.conversation_summary || ''}</div>`;
+
+    const trigger = document.getElementById('lead-trigger');
+    trigger.style.display = 'flex';
+
+    // Auto-open after short delay
+    setTimeout(() => {
+      leadPreviewOpen = true;
+      document.getElementById('lead-preview').classList.add('open');
+    }, 600);
+  }
 
   const configMeta = {
     realestate: { name: 'Apex Properties' },
@@ -1333,6 +1492,7 @@
       const data = await res.json();
       hideTyping();
       appendMsg('agent', data.reply);
+      if (data.lead_data) showLeadPreview(data.lead_data);
     } catch {
       hideTyping();
       appendMsg('agent', "Having trouble connecting. Please try again.");
