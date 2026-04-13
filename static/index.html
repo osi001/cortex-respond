@@ -129,21 +129,34 @@
 
     .hero h1 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 5.5vw, 5.5rem);
-      font-weight: 300; line-height: 1.05;
+      font-size: clamp(2.8rem, 5vw, 5.2rem);
+      font-weight: 300; line-height: 1.1;
       letter-spacing: -0.5px;
       margin-bottom: 28px;
       color: var(--text);
     }
 
+    .hero h1 .h1-line {
+      display: block;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: h1Reveal 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero h1 .h1-line:nth-child(1) { animation-delay: 0.1s; }
+    .hero h1 .h1-line:nth-child(2) { animation-delay: 0.25s; }
+    .hero h1 .h1-line:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes h1Reveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .hero h1 em {
       font-style: italic;
       color: var(--gold);
+      font-weight: 400;
     }
 
     .hero h1 strong {
       font-weight: 600;
-      display: block;
     }
 
     .hero-desc {
@@ -932,10 +945,9 @@
     </div>
 
     <h1>
-      Your leads.<br>
-      Qualified, booked,<br>
-      <em>followed up.</em><br>
-      <strong>Automatically.</strong>
+      <span class="h1-line">Your leads</span>
+      <span class="h1-line"><em>qualified, booked and followed up</em></span>
+      <span class="h1-line"><strong>automatically</strong></span>
     </h1>
 
     <p class="hero-desc">
