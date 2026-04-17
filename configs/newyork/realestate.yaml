@@ -1,0 +1,57 @@
+business:
+  name: "Apex Properties NY"
+  industry: "Real Estate"
+  tagline: "Residential sales and rentals across New York City"
+  greeting: "Hi! Welcome to Apex Properties. What can I help you with today?"
+  brand_color: "#4F46E5"
+
+region:
+  name: "newyork"
+  city: "New York"
+  currency_symbol: "$"
+  currency_code: "USD"
+  phone_format_example: "+1 (212) 555-0123"
+  example_areas:
+    - "Brooklyn"
+    - "Manhattan"
+    - "Queens"
+    - "Williamsburg"
+    - "Upper East Side"
+    - "Astoria"
+
+services:
+  - name: "Property Purchase"
+    price_range: "$750,000 and above"
+    duration: "6-10 weeks to close"
+  - name: "Apartment Rental"
+    price_range: "$2,800 - $9,500 per month"
+    duration: "1-2 weeks to move in"
+  - name: "Property Sale (Listing)"
+    price_range: "5-6% total commission"
+    duration: "4-10 weeks average"
+  - name: "Property Appraisal"
+    price_range: "$400 - $900"
+    duration: "2-4 business days"
+  - name: "Investment Advisory"
+    price_range: "Free consultation"
+    duration: "1 hour session"
+
+faqs:
+  - q: "Where are your listings located?"
+    a: "We cover Brooklyn, Manhattan, Queens, Williamsburg, Upper East Side, and Astoria."
+  - q: "Do you handle short-term rentals?"
+    a: "Yes — short-term options in Williamsburg and Brooklyn from $220 per night."
+  - q: "Can you help with closing paperwork?"
+    a: "Yes — we work with trusted closing attorneys for full transaction handling."
+  - q: "Do you work with mortgage lenders?"
+    a: "Yes, we partner with several preferred lenders and brokers."
+  - q: "What are your office hours?"
+    a: "Monday–Friday 9am–7pm, Saturday 10am–4pm."
+
+scoring:
+  rules: |
+    Score the lead 1-10 based on:
+    - Urgency: "this month/immediate" = high, "next 1-3 months" = medium, "just looking/no timeline" = low
+    - Budget: clearly stated budget matching or above price range = high, vague or below range = medium/low
+    - Intent: buying or renting with clear requirements = higher score than general enquiry
+    - Combine all factors. Ready buyer with matching budget = 8-10. Interested but timeline unclear = 5-7. Just browsing = 1-4.

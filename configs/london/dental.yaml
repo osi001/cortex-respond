@@ -1,0 +1,60 @@
+business:
+  name: "SmileCraft Dental London"
+  industry: "Dental Clinic"
+  tagline: "Modern private dental care in central London"
+  greeting: "Hi! Welcome to SmileCraft Dental. How can I help you today?"
+  brand_color: "#0ea5e9"
+
+region:
+  name: "london"
+  city: "London"
+  currency_symbol: "£"
+  currency_code: "GBP"
+  phone_format_example: "+44 20 7946 0123"
+  example_areas:
+    - "Camden"
+    - "Shoreditch"
+    - "Islington"
+    - "Hackney"
+    - "Kensington"
+    - "Clapham"
+
+services:
+  - name: "General Consultation"
+    price_range: "£70 - £120"
+    duration: "30–45 minutes"
+  - name: "Teeth Whitening"
+    price_range: "£350 - £650"
+    duration: "1–2 sessions"
+  - name: "Dental Implants"
+    price_range: "£2,400 - £3,800 per tooth"
+    duration: "3–6 months full process"
+  - name: "Braces / Orthodontics"
+    price_range: "£2,500 - £5,500"
+    duration: "12–24 months"
+  - name: "Root Canal Treatment"
+    price_range: "£450 - £1,100"
+    duration: "1–3 sessions"
+  - name: "Dental Veneers"
+    price_range: "£650 - £1,200 per tooth"
+    duration: "2 appointments"
+
+faqs:
+  - q: "Where are you located?"
+    a: "We're in central London. Full address sent on booking confirmation."
+  - q: "Do you accept private insurance?"
+    a: "Yes — we accept Bupa, AXA PPP, Vitality, and Aviva."
+  - q: "Is teeth whitening painful?"
+    a: "No — it's non-invasive. Some patients have mild sensitivity for 24 hours."
+  - q: "How long does a consultation take?"
+    a: "Initial consultations are 30–45 minutes including X-rays if needed."
+  - q: "What are your opening hours?"
+    a: "Monday–Friday 9am–7pm, Saturday 9am–2pm."
+
+scoring:
+  rules: |
+    Score the lead 1-10 based on:
+    - Urgency: "toothache/pain right now" or "ASAP" = high, "this week/month" = medium, "just enquiring" = low
+    - Budget: clearly stated budget matching service range = high, vague or no budget mentioned = medium
+    - Intent: specific treatment in mind = higher score than general curiosity
+    - Combine all factors. Patient in pain with budget = 8-10. Interested in elective procedure with timeline = 5-7. General enquiry only = 1-4.

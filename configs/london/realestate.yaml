@@ -1,0 +1,57 @@
+business:
+  name: "Apex Properties London"
+  industry: "Real Estate"
+  tagline: "Premium residential sales and lettings across central London"
+  greeting: "Hi! Welcome to Apex Properties. What can I help you with today?"
+  brand_color: "#4F46E5"
+
+region:
+  name: "london"
+  city: "London"
+  currency_symbol: "£"
+  currency_code: "GBP"
+  phone_format_example: "+44 20 7946 0123"
+  example_areas:
+    - "Camden"
+    - "Shoreditch"
+    - "Islington"
+    - "Hackney"
+    - "Kensington"
+    - "Clapham"
+
+services:
+  - name: "Property Purchase"
+    price_range: "£450,000 and above"
+    duration: "8-14 weeks to complete"
+  - name: "Property Letting / Rental"
+    price_range: "£1,800 - £6,500 per month"
+    duration: "1-2 weeks to move in"
+  - name: "Property Sale (Listing)"
+    price_range: "1.5% agency commission + VAT"
+    duration: "6-14 weeks average"
+  - name: "Property Valuation"
+    price_range: "£250 - £600"
+    duration: "2-3 working days"
+  - name: "Investment Advisory"
+    price_range: "Free consultation"
+    duration: "1 hour session"
+
+faqs:
+  - q: "Where are your listings located?"
+    a: "We cover Camden, Shoreditch, Islington, Hackney, Kensington, and Clapham."
+  - q: "Do you handle short lets?"
+    a: "Yes — short-let options in Shoreditch and Camden from £180 per night."
+  - q: "Can you help with conveyancing?"
+    a: "Yes — we work with trusted solicitors for full transaction handling."
+  - q: "Do you work with mortgage brokers?"
+    a: "Yes, we partner with several whole-of-market brokers."
+  - q: "What are your office hours?"
+    a: "Monday–Friday 9am–6pm, Saturday 10am–3pm."
+
+scoring:
+  rules: |
+    Score the lead 1-10 based on:
+    - Urgency: "this month/immediate" = high, "next 1-3 months" = medium, "just looking/no timeline" = low
+    - Budget: clearly stated budget matching or above price range = high, vague or below range = medium/low
+    - Intent: buying or renting with clear requirements = higher score than general enquiry
+    - Combine all factors. Ready buyer with matching budget = 8-10. Interested but timeline unclear = 5-7. Just browsing = 1-4.

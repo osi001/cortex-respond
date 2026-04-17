@@ -116,4 +116,26 @@ def test_load_region_config_missing_file_raises():
     from region import load_region_config
     import pytest as _pt
     with _pt.raises(FileNotFoundError):
-        load_region_config("london", "realestate")  # not yet created
+        load_region_config("london", "nosuchbiz")
+
+
+def test_load_region_config_london_realestate():
+    from region import load_region_config
+    cfg = load_region_config("london", "realestate")
+    assert cfg["region"]["currency_symbol"] == "£"
+    assert "Camden" in cfg["region"]["example_areas"]
+    assert any("£" in s["price_range"] for s in cfg["services"])
+
+
+def test_load_region_config_london_dental():
+    from region import load_region_config
+    cfg = load_region_config("london", "dental")
+    assert cfg["region"]["city"] == "London"
+    assert cfg["business"]["name"] == "SmileCraft Dental London"
+
+
+def test_load_region_config_newyork_realestate():
+    from region import load_region_config
+    cfg = load_region_config("newyork", "realestate")
+    assert cfg["region"]["currency_symbol"] == "$"
+    assert "Brooklyn" in cfg["region"]["example_areas"]
