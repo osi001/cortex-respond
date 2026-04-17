@@ -29,3 +29,68 @@ def test_country_code_is_case_insensitive():
     assert country_to_region("gb") == "london"
     assert country_to_region("ng") == "lagos"
     assert country_to_region("us") == "newyork"
+
+
+from unittest.mock import patch, MagicMock
+
+
+def test_resolve_region_with_valid_override():
+    from region import resolve_region
+    assert resolve_region("8.8.8.8", override="london") == "london"
+    assert resolve_region("8.8.8.8", override="lagos") == "lagos"
+    assert resolve_region("8.8.8.8", override="newyork") == "newyork"
+
+
+def test_resolve_region_ignores_invalid_override():
+    from region import resolve_region, _cache_clear
+    _cache_clear()
+    fake_response = MagicMock()
+    fake_response.json.return_value = {"countryCode": "US"}
+    fake_response.raise_for_status = MagicMock()
+    with patch("region.requests.get", return_value=fake_response) as mocked:
+        assert resolve_region("8.8.8.8", override="mars") == "newyork"
+        mocked.assert_called_once()
+
+
+def test_resolve_region_private_ip_defaults_to_lagos():
+    from region import resolve_region
+    assert resolve_region("127.0.0.1") == "lagos"
+    assert resolve_region("192.168.1.5") == "lagos"
+    assert resolve_region("10.0.0.1") == "lagos"
+    assert resolve_region("") == "lagos"
+    assert resolve_region(None) == "lagos"
+
+
+def test_resolve_region_uses_ip_api():
+    from region import resolve_region, _cache_clear
+    _cache_clear()
+    fake_response = MagicMock()
+    fake_response.json.return_value = {"countryCode": "GB"}
+    fake_response.raise_for_status = MagicMock()
+    with patch("region.requests.get", return_value=fake_response) as mocked:
+        assert resolve_region("81.2.69.142") == "london"
+        mocked.assert_called_once()
+        url = mocked.call_args[0][0]
+        assert "81.2.69.142" in url
+        assert "countryCode" in url
+
+
+def test_resolve_region_timeout_defaults_to_newyork():
+    from region import resolve_region, _cache_clear
+    import requests as _r
+    _cache_clear()
+    with patch("region.requests.get", side_effect=_r.exceptions.Timeout):
+        assert resolve_region("8.8.8.8") == "newyork"
+
+
+def test_resolve_region_caches_results():
+    from region import resolve_region, _cache_clear
+    _cache_clear()
+    fake_response = MagicMock()
+    fake_response.json.return_value = {"countryCode": "NG"}
+    fake_response.raise_for_status = MagicMock()
+    with patch("region.requests.get", return_value=fake_response) as mocked:
+        resolve_region("41.58.1.1")
+        resolve_region("41.58.1.1")
+        resolve_region("41.58.1.1")
+        assert mocked.call_count == 1
