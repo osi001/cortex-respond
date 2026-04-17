@@ -94,3 +94,26 @@ def test_resolve_region_caches_results():
         resolve_region("41.58.1.1")
         resolve_region("41.58.1.1")
         assert mocked.call_count == 1
+
+
+def test_load_region_config_lagos_realestate():
+    from region import load_region_config
+    cfg = load_region_config("lagos", "realestate")
+    assert cfg["business"]["name"] == "Apex Properties"
+    assert cfg["region"]["city"] == "Lagos"
+    assert cfg["region"]["currency_symbol"] == "₦"
+    assert "Lekki" in cfg["region"]["example_areas"]
+
+
+def test_load_region_config_lagos_dental():
+    from region import load_region_config
+    cfg = load_region_config("lagos", "dental")
+    assert cfg["business"]["name"] == "SmileCraft Dental"
+    assert cfg["region"]["currency_code"] == "NGN"
+
+
+def test_load_region_config_missing_file_raises():
+    from region import load_region_config
+    import pytest as _pt
+    with _pt.raises(FileNotFoundError):
+        load_region_config("london", "realestate")  # not yet created

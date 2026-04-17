@@ -5,6 +5,19 @@ business:
   greeting: "Hi! Welcome to SmileCraft Dental. How can I help you today?"
   brand_color: "#0ea5e9"
 
+region:
+  name: "lagos"
+  city: "Lagos"
+  currency_symbol: "₦"
+  currency_code: "NGN"
+  phone_format_example: "+234 801 234 5678"
+  example_areas:
+    - "Lekki"
+    - "Victoria Island"
+    - "Ikoyi"
+    - "Ajah"
+    - "Ikeja GRA"
+
 services:
   - name: "General Consultation"
     price_range: "₦10,000 - ₦20,000"

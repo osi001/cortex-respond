@@ -5,6 +5,19 @@ business:
   greeting: "Hi! Welcome to Apex Properties. What can I help you with today?"
   brand_color: "#4F46E5"
 
+region:
+  name: "lagos"
+  city: "Lagos"
+  currency_symbol: "₦"
+  currency_code: "NGN"
+  phone_format_example: "+234 801 234 5678"
+  example_areas:
+    - "Lekki"
+    - "Victoria Island"
+    - "Ikoyi"
+    - "Ajah"
+    - "Ikeja GRA"
+
 services:
   - name: "Property Purchase"
     price_range: "₦25,000,000 and above"

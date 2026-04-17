@@ -84,3 +84,18 @@ def resolve_region(ip: Optional[str], override: Optional[str] = None) -> str:
     if not country:
         return "newyork"
     return country_to_region(country)
+
+
+from pathlib import Path
+import yaml
+
+_CONFIGS_DIR = Path(__file__).parent / "configs"
+
+
+def load_region_config(region: str, business_type: str) -> dict:
+    """Load the YAML config for a given region + business type."""
+    path = _CONFIGS_DIR / region / f"{business_type}.yaml"
+    if not path.is_file():
+        raise FileNotFoundError(f"No config at {path}")
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
