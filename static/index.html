@@ -941,7 +941,7 @@
   <div class="hero-left">
     <div class="hero-eyebrow">
       <div class="eyebrow-line"></div>
-      <span class="eyebrow-text">Inbound Lead Intelligence</span>
+      <span class="eyebrow-text">Inbound Lead Intelligence · <span data-region-city>Lagos</span></span>
     </div>
 
     <h1>
@@ -1374,7 +1374,50 @@
 </div>
 
 <script>
-  let sessionId = null, chatOpen = false, initialized = false, configKey = 'realestate', leadPreviewOpen = false;
+  // ─── Region + business state ───
+  const STORAGE_KEY = 'cortex_demo_context';
+  const urlParams = new URLSearchParams(window.location.search);
+  const stored = (() => {
+    try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}'); }
+    catch { return {}; }
+  })();
+
+  let configKey = urlParams.get('business') || stored.business_type || 'realestate';
+  let regionSlug = urlParams.get('region') || stored.region || null;
+  let regionInfo = null;
+
+  function persistContext() {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+      business_type: configKey,
+      region: regionSlug,
+    }));
+  }
+
+  async function loadRegion() {
+    try {
+      const qs = regionSlug ? `?region=${encodeURIComponent(regionSlug)}` : '';
+      const res = await fetch('/api/region' + qs);
+      if (!res.ok) throw new Error('bad status');
+      regionInfo = await res.json();
+      regionSlug = regionInfo.region;
+      persistContext();
+      applyRegionCopy(regionInfo);
+    } catch (e) {
+      console.warn('Region detection failed, using defaults:', e);
+      regionSlug = regionSlug || 'newyork';
+    }
+  }
+
+  function applyRegionCopy(info) {
+    document.querySelectorAll('[data-region-city]').forEach(el => {
+      el.textContent = info.city;
+    });
+    document.querySelectorAll('[data-region-currency]').forEach(el => {
+      el.textContent = info.currency_symbol;
+    });
+  }
+
+  let sessionId = null, chatOpen = false, initialized = false, leadPreviewOpen = false;
 
   function toggleLeadPreview() {
     leadPreviewOpen = !leadPreviewOpen;
@@ -1426,6 +1469,7 @@
   function switchConfig(key) {
     if (key === configKey) return;
     configKey = key;
+    persistContext();
 
     // Update button states
     document.querySelectorAll('.demo-btn').forEach(b => {
@@ -1474,7 +1518,7 @@
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, message: '__init__', config_key: configKey }),
+        body: JSON.stringify({ session_id: sessionId, message: '__init__', business_type: configKey, region: regionSlug }),
       });
       const data = await res.json();
       hideTyping();
@@ -1499,7 +1543,7 @@
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, message: text, config_key: configKey }),
+        body: JSON.stringify({ session_id: sessionId, message: text, business_type: configKey, region: regionSlug }),
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
@@ -1543,6 +1587,8 @@
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
   document.getElementById('send-btn').addEventListener('click', sendMessage);
+
+  loadRegion();
 </script>
 </body>
 </html>
