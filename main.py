@@ -341,6 +341,23 @@ async def serve_frontend():
     return FileResponse(str(STATIC_DIR / "index.html"))
 
 
+@app.get("/api/region")
+async def api_region(request: Request, region: Optional[str] = None):
+    client_ip = _get_client_ip(request)
+    resolved = resolve_region(client_ip, override=region)
+    config = get_config(resolved, DEFAULT_BUSINESS_TYPE)
+    region_info = config.get("region", {})
+    return {
+        "region": resolved,
+        "city": region_info.get("city", ""),
+        "currency_symbol": region_info.get("currency_symbol", ""),
+        "currency_code": region_info.get("currency_code", ""),
+        "phone_format": region_info.get("phone_format_example", ""),
+        "example_areas": region_info.get("example_areas", []),
+        "business_types": list(VALID_BUSINESS_TYPES),
+    }
+
+
 # ─── Anthropic Client ────────────────────────────────────────────────────────
 
 anthropic_client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))

@@ -215,6 +215,44 @@ def test_chat_uses_london_config(monkeypatch):
     assert "Camden" in captured["system"] or "Shoreditch" in captured["system"]
 
 
+def test_api_region_returns_region_metadata_for_override():
+    from fastapi.testclient import TestClient
+    import main
+
+    client = TestClient(main.app)
+    response = client.get("/api/region?region=london")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["region"] == "london"
+    assert data["city"] == "London"
+    assert data["currency_symbol"] == "£"
+    assert "Camden" in data["example_areas"]
+    assert "realestate" in data["business_types"]
+    assert "dental" in data["business_types"]
+
+
+def test_api_region_defaults_to_lagos_for_local_ip():
+    from fastapi.testclient import TestClient
+    import main
+
+    client = TestClient(main.app)
+    response = client.get("/api/region")
+    data = response.json()
+    # TestClient uses 127.0.0.1, which is private -> lagos
+    assert data["region"] == "lagos"
+    assert data["currency_symbol"] == "₦"
+
+
+def test_api_region_invalid_override_falls_through_to_detection():
+    from fastapi.testclient import TestClient
+    import main
+
+    client = TestClient(main.app)
+    response = client.get("/api/region?region=mars")
+    # Invalid override ignored -> IP detection -> local IP -> lagos
+    assert response.json()["region"] == "lagos"
+
+
 def test_chat_session_pins_region(monkeypatch):
     """Second message in same session reuses the first request's region."""
     from fastapi.testclient import TestClient
