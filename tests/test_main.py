@@ -282,3 +282,44 @@ def test_chat_session_pins_region(monkeypatch):
 
     assert "£" in captured_systems[0]
     assert "£" in captured_systems[1]
+
+
+def test_full_flow_london_override(monkeypatch):
+    """GET /api/region?region=london then POST /chat reuses that region."""
+    from fastapi.testclient import TestClient
+    import main
+
+    captured_system = {}
+
+    class FakeTextBlock:
+        text = "Hi, how can I help?"
+
+    class FakeMessage:
+        content = [FakeTextBlock()]
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            captured_system["text"] = kwargs.get("system", "")
+            return FakeMessage()
+
+    class FakeAnthropic:
+        messages = FakeMessages()
+
+    monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
+
+    client = TestClient(main.app)
+
+    r = client.get("/api/region?region=london")
+    assert r.status_code == 200
+    region_payload = r.json()
+    assert region_payload["region"] == "london"
+
+    r2 = client.post("/chat", json={
+        "session_id": "e2e-london",
+        "message": "hi",
+        "region": region_payload["region"],
+        "business_type": "realestate",
+    })
+    assert r2.status_code == 200
+    assert "£" in captured_system["text"]
+    assert "London" in captured_system["text"]
