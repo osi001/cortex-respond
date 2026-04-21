@@ -10,29 +10,43 @@ from pathlib import Path
 import anthropic
 import yaml
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from region import resolve_region, load_region_config, VALID_REGIONS
+
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ─── Config ───────────────────────────────────────────────────────────────────
+# ─── Config Loading ───────────────────────────────────────────────────────────
 
-CONFIG_FILES = {
-    "realestate": Path(__file__).parent / "config.yaml",
-    "dental":     Path(__file__).parent / "config_dental.yaml",
-}
+VALID_BUSINESS_TYPES = ("realestate", "dental")
+DEFAULT_BUSINESS_TYPE = "realestate"
+DEFAULT_REGION = "newyork"
 
 
-def load_config(key: str = "realestate") -> dict:
-    path = CONFIG_FILES.get(key, CONFIG_FILES["realestate"])
-    with open(path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+def get_config(region: str, business_type: str) -> dict:
+    """
+    Load a region+business config with fallbacks:
+    - If business_type invalid -> use DEFAULT_BUSINESS_TYPE
+    - If region invalid -> use DEFAULT_REGION
+    - If file still missing -> fall back to (DEFAULT_REGION, DEFAULT_BUSINESS_TYPE)
+    """
+    if business_type not in VALID_BUSINESS_TYPES:
+        business_type = DEFAULT_BUSINESS_TYPE
+    if region not in VALID_REGIONS:
+        region = DEFAULT_REGION
+    try:
+        return load_region_config(region, business_type)
+    except FileNotFoundError:
+        logger.error("Missing config for %s/%s — falling back to %s/%s",
+                     region, business_type, DEFAULT_REGION, DEFAULT_BUSINESS_TYPE)
+        return load_region_config(DEFAULT_REGION, DEFAULT_BUSINESS_TYPE)
 
 
 def build_system_prompt(config: dict) -> str:
@@ -40,6 +54,7 @@ def build_system_prompt(config: dict) -> str:
     services = config.get("services", [])
     faqs = config.get("faqs", [])
     scoring_rules = config.get("scoring", {}).get("rules", "")
+    region = config.get("region") or {}
 
     services_text = "\n".join(
         f"  - {s['name']}: {s['price_range']}, {s['duration']}" for s in services
@@ -48,13 +63,25 @@ def build_system_prompt(config: dict) -> str:
         f"  Q: {f['q']}\n  A: {f['a']}" for f in faqs
     )
 
+    if region:
+        areas = ", ".join(region.get("example_areas", []))
+        region_block = f"""
+Regional context — the visitor is in {region.get('city', '')}:
+- Use {region.get('currency_symbol', '')} ({region.get('currency_code', '')}) for all prices and budget discussion.
+- Typical areas you can reference: {areas}.
+- Phone numbers in this market look like: {region.get('phone_format_example', '')}. Accept any reasonable format the user provides.
+- When asking which area they're interested in, offer 2–3 of the listed areas as examples.
+"""
+    else:
+        region_block = ""
+
     return f"""You are a concise, professional agent for {biz['name']}, {biz['tagline']}.
 
 Communication style:
 - Keep all responses short and direct. No unnecessary pleasantries or filler.
 - Be warm but efficient. Get to the point.
 - Never use bullet points or numbered lists in your replies. Write naturally.
-
+{region_block}
 Your job:
 1. Greet the visitor briefly and find out what they need.
 2. Once you know what they're interested in, ask for their name, phone number, and email address all in one message. For example: "What's your name, and the best number and email to reach you?"
@@ -299,7 +326,14 @@ STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 sessions: dict = {}
-configs: dict = {key: load_config(key) for key in CONFIG_FILES}
+
+
+def _get_client_ip(request: Request) -> str:
+    """Extract client IP from X-Forwarded-For (proxied) or request.client.host."""
+    xff = request.headers.get("x-forwarded-for", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.client.host if request.client else ""
 
 
 @app.get("/")
@@ -317,7 +351,9 @@ anthropic_client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY
 class ChatRequest(BaseModel):
     session_id: str
     message: str
-    config_key: str = "realestate"
+    business_type: str = "realestate"
+    region: Optional[str] = None
+    region_override: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
@@ -328,7 +364,7 @@ class ChatResponse(BaseModel):
 # ─── Chat Endpoint ────────────────────────────────────────────────────────────
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest):
+async def chat(req: ChatRequest, request: Request):
     cleanup_old_sessions(sessions)
 
     if req.session_id not in sessions:
@@ -341,7 +377,18 @@ async def chat(req: ChatRequest):
     session = sessions[req.session_id]
     session["messages"].append({"role": "user", "content": req.message})
 
-    active_config = configs.get(req.config_key, configs["realestate"])
+    # Resolve region: explicit value > session value > IP lookup > default
+    if req.region in VALID_REGIONS:
+        region = req.region
+    elif "region" in session:
+        region = session["region"]
+    else:
+        client_ip = _get_client_ip(request)
+        region = resolve_region(client_ip, override=req.region_override)
+
+    session["region"] = region
+    session["business_type"] = req.business_type
+    active_config = get_config(region, req.business_type)
 
     try:
         response = anthropic_client.messages.create(

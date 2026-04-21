@@ -9,8 +9,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 def test_cleanup_removes_old_sessions():
     from main import cleanup_old_sessions
     sessions = {
-        "old": {"messages": [], "created_at": time.time() - 4000},  # older than 1 hour
-        "new": {"messages": [], "created_at": time.time() - 100},   # recent
+        "old": {"messages": [], "created_at": time.time() - 50000},  # older than 13h default
+        "new": {"messages": [], "created_at": time.time() - 100},    # recent
     }
     cleanup_old_sessions(sessions)
     assert "old" not in sessions
@@ -21,7 +21,7 @@ def test_cleanup_keeps_fresh_sessions():
     from main import cleanup_old_sessions
     sessions = {
         "a": {"messages": [], "created_at": time.time() - 10},
-        "b": {"messages": [], "created_at": time.time() - 3500},  # just under 1 hour
+        "b": {"messages": [], "created_at": time.time() - 46000},  # just under 13h
     }
     cleanup_old_sessions(sessions)
     assert "a" in sessions
@@ -83,7 +83,7 @@ def test_chat_endpoint_returns_reply(monkeypatch):
     monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
 
     client = TestClient(main.app)
-    response = client.post("/chat", json={"session_id": "test-session-1", "message": "Hi there"})
+    response = client.post("/chat", json={"session_id": "test-session-1", "message": "Hi there", "region": "lagos"})
     assert response.status_code == 200
     data = response.json()
     assert "reply" in data
@@ -115,13 +115,46 @@ def test_chat_endpoint_parses_lead_data(monkeypatch):
     monkeypatch.setattr(main, "append_lead_to_sheet", lambda lead: None)
 
     client = TestClient(main.app)
-    response = client.post("/chat", json={"session_id": "test-session-2", "message": "That covers everything"})
+    response = client.post("/chat", json={"session_id": "test-session-2", "message": "That covers everything", "region": "lagos"})
     assert response.status_code == 200
     data = response.json()
     assert "Thank you Amara" in data["reply"]
     assert "<lead_data>" not in data["reply"]
     assert data["lead_data"]["name"] == "Amara"
     assert data["lead_data"]["score"] == 7
+
+
+def test_system_prompt_includes_region_context():
+    from main import build_system_prompt
+    cfg = {
+        "business": {"name": "Apex Properties London", "tagline": "Premium London lettings"},
+        "region": {
+            "city": "London",
+            "currency_symbol": "£",
+            "phone_format_example": "+44 20 7946 0123",
+            "example_areas": ["Camden", "Shoreditch", "Islington"],
+        },
+        "services": [{"name": "Rental", "price_range": "£1,800", "duration": "1 week"}],
+        "faqs": [{"q": "Where?", "a": "Central London"}],
+        "scoring": {"rules": "standard"},
+    }
+    prompt = build_system_prompt(cfg)
+    assert "London" in prompt
+    assert "£" in prompt
+    assert "Camden" in prompt
+    assert "+44 20 7946 0123" in prompt
+
+
+def test_system_prompt_works_without_region_block():
+    from main import build_system_prompt
+    cfg = {
+        "business": {"name": "Test Co", "tagline": "Testing"},
+        "services": [],
+        "faqs": [],
+        "scoring": {"rules": ""},
+    }
+    prompt = build_system_prompt(cfg)
+    assert "Test Co" in prompt
 
 
 def test_chat_endpoint_handles_api_error(monkeypatch):
@@ -138,8 +171,76 @@ def test_chat_endpoint_handles_api_error(monkeypatch):
     monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
 
     client = TestClient(main.app)
-    response = client.post("/chat", json={"session_id": "test-session-3", "message": "Hello"})
+    response = client.post("/chat", json={"session_id": "test-session-3", "message": "Hello", "region": "lagos"})
     assert response.status_code == 200
     data = response.json()
     assert data["lead_data"] is None
     assert "trouble" in data["reply"].lower() or "sorry" in data["reply"].lower()
+
+
+def test_chat_uses_london_config(monkeypatch):
+    from fastapi.testclient import TestClient
+    import main
+
+    captured = {}
+
+    class FakeTextBlock:
+        text = "Hi! How can I help?"
+
+    class FakeMessage:
+        content = [FakeTextBlock()]
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            captured["system"] = kwargs.get("system", "")
+            return FakeMessage()
+
+    class FakeAnthropic:
+        messages = FakeMessages()
+
+    monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
+
+    client = TestClient(main.app)
+    response = client.post(
+        "/chat",
+        json={
+            "session_id": "london-session",
+            "message": "looking for a flat",
+            "region": "london",
+            "business_type": "realestate",
+        },
+    )
+    assert response.status_code == 200
+    assert "£" in captured["system"]
+    assert "Camden" in captured["system"] or "Shoreditch" in captured["system"]
+
+
+def test_chat_session_pins_region(monkeypatch):
+    """Second message in same session reuses the first request's region."""
+    from fastapi.testclient import TestClient
+    import main
+
+    captured_systems = []
+
+    class FakeTextBlock:
+        text = "Reply"
+
+    class FakeMessage:
+        content = [FakeTextBlock()]
+
+    class FakeMessages:
+        def create(self, **kwargs):
+            captured_systems.append(kwargs.get("system", ""))
+            return FakeMessage()
+
+    class FakeAnthropic:
+        messages = FakeMessages()
+
+    monkeypatch.setattr(main, "anthropic_client", FakeAnthropic())
+
+    client = TestClient(main.app)
+    client.post("/chat", json={"session_id": "pin-1", "message": "hi", "region": "london"})
+    client.post("/chat", json={"session_id": "pin-1", "message": "more"})
+
+    assert "£" in captured_systems[0]
+    assert "£" in captured_systems[1]
