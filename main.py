@@ -19,7 +19,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from region import resolve_region, load_region_config, VALID_REGIONS
 
-load_dotenv()
+load_dotenv(override=True)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
