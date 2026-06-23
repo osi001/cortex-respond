@@ -229,6 +229,7 @@ def test_api_region_returns_region_metadata_for_override():
     assert "Camden" in data["example_areas"]
     assert "realestate" in data["business_types"]
     assert "dental" in data["business_types"]
+    assert "cortexlabz" in data["business_types"]
 
 
 def test_api_region_defaults_to_lagos_for_local_ip():

@@ -463,7 +463,7 @@ async def chat(req: ChatRequest, request: Request):
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
     # Don't intercept API routes or static assets
-    if full_path.startswith("api/") or full_path.startswith("chat"):
+    if full_path.startswith("api/"):
         from fastapi import HTTPException
         raise HTTPException(status_code=404)
     index = STATIC_DIR / "index.html"
