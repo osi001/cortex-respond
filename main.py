@@ -422,7 +422,7 @@ async def chat(req: ChatRequest, request: Request):
 
     try:
         response = anthropic_client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=2048,
             system=build_system_prompt(active_config),
             messages=session["messages"],
@@ -468,12 +468,12 @@ async def api_diag():
         "key_len": len(key),
         "key_prefix": key[:7] if key else None,
         "key_has_whitespace": key != key.strip(),
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-4-6",
         "sdk_version": getattr(anthropic, "__version__", "unknown"),
     }
     try:
         resp = anthropic_client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-sonnet-4-6",
             max_tokens=16,
             messages=[{"role": "user", "content": "ping"}],
         )
