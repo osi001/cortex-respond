@@ -284,6 +284,19 @@ def test_chat_session_pins_region(monkeypatch):
     assert "£" in captured_systems[1]
 
 
+def test_get_config_returns_cortexlabz():
+    from main import get_config
+    config = get_config("newyork", "cortexlabz")
+    assert config["business"]["name"] == "CortexLabz"
+
+
+def test_get_config_cortexlabz_all_regions():
+    from main import get_config
+    for region in ("lagos", "london", "newyork"):
+        config = get_config(region, "cortexlabz")
+        assert config["business"]["name"] == "CortexLabz"
+
+
 def test_full_flow_london_override(monkeypatch):
     """GET /api/region?region=london then POST /chat reuses that region."""
     from fastapi.testclient import TestClient

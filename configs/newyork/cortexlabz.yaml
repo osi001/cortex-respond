@@ -1,0 +1,45 @@
+business:
+  name: "CortexLabz"
+  industry: "AI Studio"
+  tagline: "Applied intelligence. AI solutions built for real business systems."
+  greeting: "Hi, I'm the CortexLabz assistant. What can we help you build?"
+
+services:
+  - name: "Lead Inbound AI & AI Receptionist"
+    price_range: "Quoted after discovery call"
+    duration: "1 to 3 weeks typical build"
+  - name: "AI Quoting Agent"
+    price_range: "Quoted after discovery call"
+    duration: "1 to 2 weeks typical build"
+  - name: "Lead Generation"
+    price_range: "Quoted after discovery call"
+    duration: "1 to 3 weeks typical build"
+  - name: "Customer Service Automation"
+    price_range: "Quoted after discovery call"
+    duration: "2 to 4 weeks typical build"
+  - name: "AI Animation & Video"
+    price_range: "Quoted after discovery call"
+    duration: "Varies by scope"
+  - name: "Custom Software & Systems"
+    price_range: "Quoted after discovery call"
+    duration: "Varies by scope"
+
+faqs:
+  - q: "How quickly can you deliver?"
+    a: "Timelines vary by project. After a short discovery call we give a clear scope and timeline. Typical builds take 1 to 4 weeks."
+  - q: "Do you work with our existing systems?"
+    a: "Yes. We integrate with whatever you already have, or build from scratch if needed."
+  - q: "How much does it cost?"
+    a: "We scope and quote after a discovery call. No fixed rates — pricing depends on what needs to be built."
+  - q: "Where are you based?"
+    a: "We are a remote-first studio working with businesses worldwide."
+  - q: "Can you do work outside of AI?"
+    a: "Yes — we handle any type of software or digital work, not just AI projects."
+
+scoring:
+  rules: |
+    Score the lead 1-10 based on:
+    - Contact info: name + phone + email all provided = high. Missing info = lower.
+    - Clarity: clear service or project described = higher. Vague or just browsing = lower.
+    - Urgency: "this week/this month" = high, "a few months" = medium, "just exploring" = low.
+    - Combine all factors. Clear project + full contact info + urgency = 8-10. Interested but vague or missing info = 5-7. Browsing = 1-4.

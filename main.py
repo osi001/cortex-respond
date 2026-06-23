@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # ─── Config Loading ───────────────────────────────────────────────────────────
 
-VALID_BUSINESS_TYPES = ("realestate", "dental")
+VALID_BUSINESS_TYPES = ("realestate", "dental", "cortexlabz")
 DEFAULT_BUSINESS_TYPE = "realestate"
 DEFAULT_REGION = "newyork"
 
@@ -324,6 +324,10 @@ app.add_middleware(
 
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+# Serve Vite build assets from /assets (Vite default output path)
+_assets_dir = STATIC_DIR / "assets"
+if _assets_dir.is_dir():
+    app.mount("/assets", StaticFiles(directory=str(_assets_dir)), name="assets")
 
 sessions: dict = {}
 
@@ -339,6 +343,15 @@ def _get_client_ip(request: Request) -> str:
 @app.get("/")
 async def serve_frontend():
     return FileResponse(str(STATIC_DIR / "index.html"))
+
+
+@app.get("/favicon.svg")
+async def serve_favicon():
+    f = STATIC_DIR / "favicon.svg"
+    if f.is_file():
+        return FileResponse(str(f))
+    from fastapi import HTTPException
+    raise HTTPException(status_code=404)
 
 
 @app.get("/api/region")
@@ -443,3 +456,18 @@ async def chat(req: ChatRequest, request: Request):
         )
 
     return ChatResponse(reply=reply, lead_data=lead)
+
+
+# SPA catch-all — serves index.html for any non-API, non-static route
+# MUST be registered after all API routes so it doesn't shadow them
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    # Don't intercept API routes or static assets
+    if full_path.startswith("api/") or full_path.startswith("chat"):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404)
+    index = STATIC_DIR / "index.html"
+    if index.is_file():
+        return FileResponse(str(index))
+    from fastapi import HTTPException
+    raise HTTPException(status_code=404)
