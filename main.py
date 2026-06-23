@@ -121,6 +121,22 @@ def cleanup_old_sessions(sessions: dict, max_age_seconds: int = 46800) -> None:
         del sessions[sid]
 
 
+def strip_long_dashes(text: str) -> str:
+    """Remove em/en dashes from user-facing replies (they read as AI-generated).
+
+    Em dash and friends become a comma; en dash (often used in numeric ranges
+    like "1–3 weeks") becomes a plain hyphen. Ordinary hyphens are untouched.
+    """
+    # em dash, figure dash, horizontal bar → comma separator
+    text = re.sub(r"\s*[—‒―]\s*", ", ", text)
+    # en dash → plain hyphen
+    text = text.replace("–", "-")
+    # tidy any accidental double punctuation/space the swap may create
+    text = re.sub(r",\s*,", ",", text)
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    return text
+
+
 def parse_lead_data(raw_response: str) -> tuple[str, Optional[dict]]:
     """
     Extract <lead_data>...</lead_data> JSON block from Claude's response.
@@ -437,6 +453,7 @@ async def chat(req: ChatRequest, request: Request):
         )
 
     reply, lead = parse_lead_data(raw_reply)
+    reply = strip_long_dashes(reply)
     session["messages"].append({"role": "assistant", "content": raw_reply})
 
     if lead:
