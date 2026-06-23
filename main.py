@@ -458,6 +458,37 @@ async def chat(req: ChatRequest, request: Request):
     return ChatResponse(reply=reply, lead_data=lead)
 
 
+@app.get("/api/diag")
+async def api_diag():
+    """Temporary diagnostic: reports API key presence and live Anthropic status.
+    Does NOT leak the key — only its presence, length, and prefix."""
+    key = os.environ.get("ANTHROPIC_API_KEY") or ""
+    info = {
+        "key_present": bool(key),
+        "key_len": len(key),
+        "key_prefix": key[:7] if key else None,
+        "key_has_whitespace": key != key.strip(),
+        "model": "claude-sonnet-4-20250514",
+        "sdk_version": getattr(anthropic, "__version__", "unknown"),
+    }
+    try:
+        resp = anthropic_client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=16,
+            messages=[{"role": "user", "content": "ping"}],
+        )
+        info["anthropic_ok"] = True
+        info["anthropic_reply"] = resp.content[0].text
+    except Exception as e:
+        info["anthropic_ok"] = False
+        info["error_type"] = type(e).__name__
+        info["error_message"] = str(e)
+        status = getattr(e, "status_code", None)
+        if status is not None:
+            info["status_code"] = status
+    return info
+
+
 # SPA catch-all — serves index.html for any non-API, non-static route
 # MUST be registered after all API routes so it doesn't shadow them
 @app.get("/{full_path:path}")
